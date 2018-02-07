@@ -135,7 +135,7 @@ public final class LED {
         return coordinates;
     }
 
-    String getOutputLine() {
+    String getOutputLine() { // Passes the assembly command to the main method when called
         return outputLine;
     }
 
