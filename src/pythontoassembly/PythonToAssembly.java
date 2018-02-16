@@ -46,18 +46,24 @@ public class PythonToAssembly {
             if(line.contains("microbit.display")){
                 LED led = new LED(line);
                 assemText[L]=led.getOutputLine();
-            }
+                }
             
-            else{ // Default, empty elements will be removed
-                assemText[L]="";
+            // Sleep functionality
+            if(line.contains("sleep")){
+                Sleep sleep = new Sleep(line);
+                
+                assemText[L]=sleep.getOutputLine();
             }
+
             L++; // Increment size counter
+            
         }
         assemText[L] = "END"; // All programs must finish with "END"
         in.close(); // Close the buffer
         
         // Remove empty and null elements from the array
         String[] outputText = formatOutputText(assemText, L);
+
         
         CreateAsmFile(outputText); // Output final text to a .asm file
     }
