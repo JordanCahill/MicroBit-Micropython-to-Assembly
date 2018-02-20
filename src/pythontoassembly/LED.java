@@ -5,12 +5,12 @@ package pythontoassembly;
  * Constructor used to call methods that can convert micropython LED commands for an SCC
  * Assumes the SCC is using R2 as a 4x4 16-bit LED array in the following format:
  * 
- * 12 | 13 | 14 | 15
- * 8  | 9  | 10 | 11 
- * 4  | 5  | 6  | 7
- * 0  | 1  | 2  | 3
+ * 15 | 14 | 13 | 12
+ * 11 | 10 | 9  | 8 
+ * 7  | 6  | 5  | 4
+ * 3  | 2  | 1  | 0
  * 
- * where bit 0 corresponds to coordinates (0,0) and bit 12 corresponds to (0,4) etc. 
+ * where bit 0 corresponds to coordinates (3,0) and bit 12 corresponds to (3,3) etc. 
  * 
  * @author Jordan Cahill
  * @date 07-Feb-2018
@@ -58,62 +58,62 @@ public final class LED {
         switch (y){
             case "0":
                 switch (x){
-                    case "0":
-                        command = "INVBR R2, 0";
-                        break;
-                    case "1":
-                        command = "INVBR R2, 1";
+                    case "3":
+                        command = "INVBR R0, 0";
                         break;
                     case "2":
-                        command = "INVBR R2, 2";
+                        command = "INVBR R0, 1";
                         break;
-                    case "3":
-                        command = "INVBR R2, 3";
+                    case "1":
+                        command = "INVBR R0, 2";
+                        break;
+                    case "0":
+                        command = "INVBR R0, 3";
                         break;
                 } break; 
             case "1":
                 switch (x){
-                    case "0":
-                        command = "INVBR R2, 4";
-                        break;
-                    case "1":
-                        command = "INVBR R2, 5";
+                    case "3":
+                        command = "INVBR R0, 4";
                         break;
                     case "2":
-                        command = "INVBR R2, 6";
+                        command = "INVBR R0, 5";
                         break;
-                    case "3":
-                        command = "INVBR R2, 7";
+                    case "1":
+                        command = "INVBR R0, 6";
+                        break;
+                    case "0":
+                        command = "INVBR R0, 7";
                         break;
                 } break;
             case "2":
                 switch (x){
-                    case "0":
-                        command = "INVBR R2, 8";
-                        break;
-                    case "1":
-                        command = "INVBR R2, 9";
+                    case "3":
+                        command = "INVBR R0, 8";
                         break;
                     case "2":
-                        command = "INVBR R2, 10";
+                        command = "INVBR R0, 9";
                         break;
-                    case "3":
-                        command = "INVBR R2, 11";
+                    case "1":
+                        command = "INVBR R0, 10";
+                        break;
+                    case "0":
+                        command = "INVBR R0, 11";
                         break;
                 } break;
             case "3":
                 switch (x){
-                    case "0":
-                        command = "INVBR R2, 12";
-                        break;
-                    case "1":
-                        command = "INVBR R2, 13";
+                    case "3":
+                        command = "INVBR R0, 12";
                         break;
                     case "2":
-                        command = "INVBR R2, 14";
+                        command = "INVBR R0, 13";
                         break;
-                    case "3":
-                        command = "INVBR R2, 15";
+                    case "1":
+                        command = "INVBR R0, 14";
+                        break;
+                    case "0":
+                        command = "INVBR R0, 15";
                         break;
                 } break;
         }   

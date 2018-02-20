@@ -16,16 +16,18 @@ public class PythonToAssembly {
     
     /**
      * R1 is reserved for the ISR; Can be used elsewhere but runs the risk of being overwritten
-     * R2 is reserved for the LED display
+     * R0 is reserved for the LED display
      * 
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
         ///////// Do not delete, used for user directory input after testing /////////
-        /*System.out.println("Please enter file directory:");
+        /*
+        System.out.println("Please enter file directory:");
         Scanner scanner = new Scanner( System.in );
         String directory = scanner.nextLine();
+        /*
         System.out.println("Please enter the number of lines in the file (or more) to allocate space:");
         Scanner scanner = new Scanner( System.in );
         String size = scanner.nextInt();
@@ -34,6 +36,7 @@ public class PythonToAssembly {
         
         // Read in the file
         FileReader in = new FileReader("C:/Users/Jorda/Documents/College/SampleFile.py");
+        //FileReader in = new FileReader(directory);
         BufferedReader br = new BufferedReader(in);
         System.out.println("File found..");
      
@@ -147,10 +150,12 @@ public class PythonToAssembly {
         }
         out.close();
         System.out.println("\nFinal text output:");
+        System.out.println("____________________________________________\n");
         for (String s: outputText){
             System.out.println(s);
         }
-        System.out.println("\nFile written to 'PythonToAssembly' folder.");
+        System.out.println("\n____________________________________________\n");
+        System.out.println("File written to 'PythonToAssembly' folder.");
     }
 
     private static String[] setUpTimerNoReload(String[] TmrVals) {
@@ -171,7 +176,7 @@ public class PythonToAssembly {
                     index++;
                 }
             }
-        }catch(StringIndexOutOfBoundsException e){
+        }catch(StringIndexOutOfBoundsException e){ // If the left side isn't 16 bits
                     setUpText[index] = ""; index++;
         }
         
