@@ -1,7 +1,8 @@
 ; File created using a python to assembly converter
-INVBR R2, 9
-INVBR R2, 11
-INVBR R2, 12
+INVBR R0, 10
+INVBR R0, 8
+INVBR R0, 15
+INVBR R0, 10
 CALL settingUpTimer
 XOR R2, R2, R2 ; Clear R2
 END

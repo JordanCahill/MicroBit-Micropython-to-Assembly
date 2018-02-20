@@ -180,7 +180,7 @@ public class PythonToAssembly {
                     setUpText[index] = ""; index++;
         }
         
-        setUpText[index] = "MOVRSFR SFR2, R1"; index++;
+        setUpText[index] = "MOVRSFR SFR1, R1"; index++;
         setUpText[index] = "XOR R1,R1,R1"; index++;
         
         try{
