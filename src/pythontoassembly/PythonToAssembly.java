@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 public class PythonToAssembly {
     
     /**
+     * R1 is reserved for the ISR; Can be used elsewhere but runs the risk of being overwritten
+     * R2 is reserved for the LED display
+     * 
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -39,9 +42,14 @@ public class PythonToAssembly {
         int L=1; // Counter for the length of the assembly
         String line;
         System.out.println("Reading python file and converting..");
+        String[] ISR = new String[30];
         
         while ((line = br.readLine()) != null) {
 
+//            if(line.equals(";")){
+//                assemText[L]=line;
+//                }
+            
             // Display functions
             if(line.contains("microbit.display")){
                 LED led = new LED(line);
@@ -51,16 +59,30 @@ public class PythonToAssembly {
             // Sleep functionality
             if(line.contains("sleep")){
                 Sleep sleep = new Sleep(line);
+                String[] TmrVals = sleep.getOutputVals();
+                assemText[L] = "CALL settingUpTimer";
+                ISR = setUpTimerNoReload(TmrVals);
                 
-                assemText[L]=sleep.getOutputLine();
+                 //assemText[L]=sleep.getOutputLine();
             }
 
             L++; // Increment size counter
             
         }
-        assemText[L] = "END"; // All programs must finish with "END"
+        assemText[L] = "END"; L++; // All programs must finish with "END"
         in.close(); // Close the buffer
         
+        // Add setUpTimer functionality
+        assemText[L] = ";"; L++;
+        assemText[L] = ";"; L++;
+        for (String s: ISR){
+            assemText[L] = s;
+            L++;
+        }
+        
+        for (String s: assemText){
+            System.out.println(s);
+        }
         // Remove empty and null elements from the array
         String[] outputText = formatOutputText(assemText, L);
 
@@ -88,6 +110,17 @@ public class PythonToAssembly {
                     out[j] = outputList[i];
                     j++;
                 }
+            }
+        }
+        
+        int k =0;
+        // Convert ";" to blank lines
+        for (String outputList1 : outputList) {
+            if (outputList1 != null) {
+                if (outputList1.equals(";")) {
+                    out[k] = "";
+                }
+            k++;
             }
         }
         
@@ -125,5 +158,51 @@ public class PythonToAssembly {
             System.out.println(s);
         }
         System.out.println("\nFile written to 'PythonToAssembly' folder.");
+    }
+
+    private static String[] setUpTimerNoReload(String[] TmrVals) {
+        
+        String[] setUpText = new String[30];      
+        String left = TmrVals[0];
+        String right = TmrVals[1];
+         
+        setUpText[0] = "settingUpTimer:";
+        setUpText[1] = "XOR R1,R1,R1";
+        
+        int index = 2;
+        
+        try{
+            for(int i = 0; i<16; i++){
+                if ((Character.getNumericValue(left.charAt(i))) == 1){
+                    setUpText[index] = "SETBR R1, " + i;
+                    index++;
+                }
+            }
+        }catch(StringIndexOutOfBoundsException e){
+                    setUpText[index] = ""; index++;
+        }
+        
+        setUpText[index] = "MOVRSFR SFR2, R1"; index++;
+        setUpText[index] = "XOR R1,R1,R1"; index++;
+        
+        try{
+            for(int i = 0; i<16; i++){
+                if ((Character.getNumericValue(right.charAt(i))) == 1){
+                    setUpText[index] = "SETBR R1, " + i;
+                    index++;
+                }
+            }
+        }catch(StringIndexOutOfBoundsException e){
+                    setUpText[index] = ""; index++;
+        }
+        
+        // Set up global flags
+        setUpText[index] = "SETBSFR SFR0, 0 ; enable global interrupts"; index++;
+        setUpText[index] = "SETBSFR SFR0, 3 ; enable timer interrupt"; index++;
+        setUpText[index] = "SETBSFR SFR0, 6 ; down timer"; index++;
+        setUpText[index] = "SETBSFR SFR0, 4 ; enable timer. Include as last bit set"; index++;
+        setUpText[index] = "RET"; 
+        
+        return setUpText;
     }
 }

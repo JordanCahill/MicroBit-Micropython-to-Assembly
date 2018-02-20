@@ -11,19 +11,20 @@ import static java.lang.Math.pow;
  */
 class Sleep {
     
-    private String outputLine;
+    private String[] outputVals = new String[2];
+    private String inputLine;
 
     Sleep(String line) {
-        this.outputLine = line;
+        this.inputLine = line;
         
-        outputLine = sleep(line);
+        outputVals = sleep(inputLine);
         }
 
-    String getOutputLine() {
-        return outputLine;
+    String[] getOutputVals() {
+        return outputVals;
     }
 
-    private String sleep(String line) {
+    private String[] sleep(String line) {
         
         // Delimit the input string
         Formatter delim = new Formatter(line);
@@ -73,9 +74,10 @@ class Sleep {
         System.out.println(TMRH);
         System.out.println(TMRL);
         
-        // Return the two strings and call a new method
+        outputVals[0] = TMRH;
+        outputVals[1] = TMRL;
         
-        return command;
+        return outputVals;
     }
 
 }
