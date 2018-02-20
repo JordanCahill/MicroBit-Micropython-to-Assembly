@@ -37,14 +37,13 @@ class Sleep {
         
         // Calculate number of cycles required based on a 25 MHz clk cycle
         int cycles = (int) ((Double.valueOf(timeStr))/(80*(powerOfMinus9)));
-        System.out.println(cycles);
         
         // Default string
         String command = "; Unknown problem converting sleep() function";
 
         // Convert the number of cycles to a binary number
         String binVal = Integer.toBinaryString(Integer.valueOf(cycles));
-        System.out.println(binVal);
+
 
         // Original Strings will be the wrong way round so must be flipped later
         String TMRLFlipped = "";
@@ -70,10 +69,7 @@ class Sleep {
         for(int i=TMRHFlipped.length()-1;i>=0;i--){
             TMRH += TMRHFlipped.charAt(i);
         }
-        
-        System.out.println(TMRH);
-        System.out.println(TMRL);
-        
+                
         outputVals[0] = TMRH;
         outputVals[1] = TMRL;
         

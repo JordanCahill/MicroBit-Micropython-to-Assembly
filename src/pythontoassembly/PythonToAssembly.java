@@ -45,10 +45,6 @@ public class PythonToAssembly {
         String[] ISR = new String[30];
         
         while ((line = br.readLine()) != null) {
-
-//            if(line.equals(";")){
-//                assemText[L]=line;
-//                }
             
             // Display functions
             if(line.contains("microbit.display")){
@@ -80,9 +76,6 @@ public class PythonToAssembly {
             L++;
         }
         
-        for (String s: assemText){
-            System.out.println(s);
-        }
         // Remove empty and null elements from the array
         String[] outputText = formatOutputText(assemText, L);
 
