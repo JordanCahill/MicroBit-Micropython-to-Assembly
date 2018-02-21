@@ -1,1 +1,4 @@
-Program to convert micropython code used for the Micro:Bit embedded system into assembly code suitable for the ViciLab Single Cycle Computer configuration. Currently only supports basic LED commands - assumes the SCC uses a 16-bit register (R2) to represent a 4x4 LED display.
+Program to convert micropython code used for the Micro:Bit embedded system into assembly code suitable for the ViciLab Single Cycle Computer configuration.
+Register allocation:
+- R0 - 4x4 LED Display
+- R1 - Setting up Interrupt Service Routine (Can still be used but risks being overwritten)
