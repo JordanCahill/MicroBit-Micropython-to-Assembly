@@ -4,6 +4,7 @@ package pythontoassembly;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,8 +21,15 @@ public class PythonToAssembly {
      * 
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
         
+        String directory = null;
+        GUI gui = new GUI();
+        while (directory==null){
+            directory = gui.getDirectory();
+            TimeUnit.SECONDS.sleep(1);
+        }
+
         ///////// Do not delete, used for user directory input after testing /////////
         /*
         System.out.println("Please enter file directory:");
@@ -35,8 +43,8 @@ public class PythonToAssembly {
         */////////////////////////////////////////////////////////////////////////////
         
         // Read in the file
-        FileReader in = new FileReader("C:/Users/Jorda/Documents/College/SampleFile.py");
-        //FileReader in = new FileReader(directory);
+        //FileReader in = new FileReader("C:/Users/Jorda/Documents/College/SampleFile.py");
+        FileReader in = new FileReader(directory);
         BufferedReader br = new BufferedReader(in);
         System.out.println("File found..");
      
@@ -84,6 +92,9 @@ public class PythonToAssembly {
 
         
         CreateAsmFile(outputText); // Output final text to a .asm file
+        if (gui.isFinished()){
+            System.exit(0);
+        }
     }
 
     
