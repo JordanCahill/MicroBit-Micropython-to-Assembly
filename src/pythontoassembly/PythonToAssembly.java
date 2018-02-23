@@ -30,18 +30,7 @@ public class PythonToAssembly {
             directory = gui.getDirectory();
             TimeUnit.SECONDS.sleep(1);
         }
-
-        ///////// Do not delete, used for user directory input after testing /////////
-        /*
-        System.out.println("Please enter file directory:");
-        Scanner scanner = new Scanner( System.in );
-        String directory = scanner.nextLine();
-        /*
-        System.out.println("Please enter the number of lines in the file (or more) to allocate space:");
-        Scanner scanner = new Scanner( System.in );
-        String size = scanner.nextInt();
-        FileReader in = new FileReader(directory);
-        */////////////////////////////////////////////////////////////////////////////
+        
         
         // Read in the file
         //FileReader in = new FileReader("C:/Users/Jorda/Documents/College/SampleFile.py");
@@ -55,6 +44,10 @@ public class PythonToAssembly {
         String line;
         System.out.println("Reading python file and converting..");
         String[] ISR = new String[30];
+        
+        boolean buttonDetected = false; // Boolean to keep track of button presses
+        boolean countDec = false; // Checks whether bc has been decremented once
+        int bc=0; // Counter for the number of lines following a button press
         
         while ((line = br.readLine()) != null) {
             
@@ -73,6 +66,27 @@ public class PythonToAssembly {
                 
                  //assemText[L]=sleep.getOutputLine();
             }
+            
+
+            String buttonString; // To be stored in an array and adjusted appopriately
+            if((line.contains("button")) && (line.contains("is_pressed"))){
+                buttonDetected = true;
+                buttonString = line;
+                line = "\t"; // So the line is not added to loop array
+            } // Count number of lines following the function call
+            line = line.replace("\t", "foobar");
+            if(buttonDetected==true){
+                if(line.contains("foobar" )){
+                    bc++; // NOTE: First line will need to be removed
+                    line = line.replace("foobar", "");
+                    System.out.println(line);
+                }else{
+                    buttonDetected = false; // Finished py loop
+                }
+                
+                // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
+            }
+            
 
             L++; // Increment size counter
             
