@@ -47,76 +47,145 @@ public final class LED {
        
         String x = coordinates[0];
         String y = coordinates[1];
-        
+        String intensity = coordinates[2];
+        intensity = intensity.replace(")","");
+
         
         // Coordinates must be between (0,0) and (3,3)
         if (Integer.parseInt(x)>3 || Integer.parseInt(y)>3){
             command = "; Coordinates of set_pixel() too high";
         }
         
-        // Must check 4 x-values for each y-value and return an appropriate command
-        switch (y){
-            case "0":
-                switch (x){
-                    case "3":
-                        command = "INVBR R0, 0";
-                        break;
-                    case "2":
-                        command = "INVBR R0, 1";
-                        break;
-                    case "1":
-                        command = "INVBR R0, 2";
-                        break;
-                    case "0":
-                        command = "INVBR R0, 3";
-                        break;
-                } break; 
-            case "1":
-                switch (x){
-                    case "3":
-                        command = "INVBR R0, 4";
-                        break;
-                    case "2":
-                        command = "INVBR R0, 5";
-                        break;
-                    case "1":
-                        command = "INVBR R0, 6";
-                        break;
-                    case "0":
-                        command = "INVBR R0, 7";
-                        break;
-                } break;
-            case "2":
-                switch (x){
-                    case "3":
-                        command = "INVBR R0, 8";
-                        break;
-                    case "2":
-                        command = "INVBR R0, 9";
-                        break;
-                    case "1":
-                        command = "INVBR R0, 10";
-                        break;
-                    case "0":
-                        command = "INVBR R0, 11";
-                        break;
-                } break;
-            case "3":
-                switch (x){
-                    case "3":
-                        command = "INVBR R0, 12";
-                        break;
-                    case "2":
-                        command = "INVBR R0, 13";
-                        break;
-                    case "1":
-                        command = "INVBR R0, 14";
-                        break;
-                    case "0":
-                        command = "INVBR R0, 15";
-                        break;
-                } break;
-        }   
+        // If intensity between 0 and 4, turn LED off
+        if (((Integer.valueOf(intensity))<5) && ((Integer.valueOf(intensity))>=0)){
+            // Must check 4 x-values for each y-value and return an appropriate command
+            switch (y){
+                case "0":
+                    switch (x){
+                        case "3":
+                            command = "CLRBR R0, 0";
+                            break;
+                        case "2":
+                            command = "CLRBR R0, 1";
+                            break;
+                        case "1":
+                            command = "CLRBR R0, 2";
+                            break;
+                        case "0":
+                            command = "CLRBR R0, 3";
+                            break;
+                    } break; 
+                case "1":
+                    switch (x){
+                        case "3":
+                            command = "CLRBR R0, 4";
+                            break;
+                        case "2":
+                            command = "CLRBR R0, 5";
+                            break;
+                        case "1":
+                            command = "CLRBR R0, 6";
+                            break;
+                        case "0":
+                            command = "CLRBR R0, 7";
+                            break;
+                    } break;
+                case "2":
+                    switch (x){
+                        case "3":
+                            command = "CLRBR R0, 8";
+                            break;
+                        case "2":
+                            command = "CLRBR R0, 9";
+                            break;
+                        case "1":
+                            command = "CLRBR R0, 10";
+                            break;
+                        case "0":
+                            command = "CLRBR R0, 11";
+                            break;
+                    } break;
+                case "3":
+                    switch (x){
+                        case "3":
+                            command = "CLRBR R0, 12";
+                            break;
+                        case "2":
+                            command = "CLRBR R0, 13";
+                            break;
+                        case "1":
+                            command = "CLRBR R0, 14";
+                            break;
+                        case "0":
+                            command = "CLRBR R0, 15";
+                            break;
+                    } break;
+            } // If intensity between 5 and 9, turn LED on
+        }else if (((Integer.valueOf(intensity))>=5) && ((Integer.valueOf(intensity))<10)){
+            // Must check 4 x-values for each y-value and return an appropriate command
+            switch (y){
+                case "0":
+                    switch (x){
+                        case "3":
+                            command = "SETBR R0, 0";
+                            break;
+                        case "2":
+                            command = "SETBR R0, 1";
+                            break;
+                        case "1":
+                            command = "SETBR R0, 2";
+                            break;
+                        case "0":
+                            command = "SETBR R0, 3";
+                            break;
+                    } break; 
+                case "1":
+                    switch (x){
+                        case "3":
+                            command = "SETBR R0, 4";
+                            break;
+                        case "2":
+                            command = "SETBR R0, 5";
+                            break;
+                        case "1":
+                            command = "SETBR R0, 6";
+                            break;
+                        case "0":
+                            command = "SETBR R0, 7";
+                            break;
+                    } break;
+                case "2":
+                    switch (x){
+                        case "3":
+                            command = "SETBR R0, 8";
+                            break;
+                        case "2":
+                            command = "SETBR R0, 9";
+                            break;
+                        case "1":
+                            command = "SETBR R0, 10";
+                            break;
+                        case "0":
+                            command = "SETBR R0, 11";
+                            break;
+                    } break;
+                case "3":
+                    switch (x){
+                        case "3":
+                            command = "SETBR R0, 12";
+                            break;
+                        case "2":
+                            command = "SETBR R0, 13";
+                            break;
+                        case "1":
+                            command = "SETBR R0, 14";
+                            break;
+                        case "0":
+                            command = "SETBR R0, 15";
+                            break;
+                    } break;
+            }   
+        }else{command = "; Python syntax error at 'setPixel()', intensity must be an integer between 0 and 9";}
         return command;
     }
 
