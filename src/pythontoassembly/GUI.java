@@ -84,11 +84,6 @@ public class GUI extends javax.swing.JFrame{
                 this.directory = selectedFile.toString();
                 directoryField.setText(directory);
                 System.out.println(selectedFile.toString());
-                JOptionPane.showConfirmDialog(null,
-                    "Assembly file created in root package folder",
-                    "Conversion Successful",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
                 frame.dispose();
                 
                 this.done = true; // Sends a boolean back to main to allow the system to shut down

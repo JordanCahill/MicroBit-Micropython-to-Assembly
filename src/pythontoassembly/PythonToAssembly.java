@@ -7,6 +7,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -92,8 +93,16 @@ public class PythonToAssembly {
 
         
         CreateAsmFile(outputText); // Output final text to a .asm file
-        if (gui.isFinished()){
-            System.exit(0);
+        
+        if (gui.isFinished()){ // Finish program and display confirmation
+            
+            JOptionPane.showConfirmDialog(null,
+                "Assembly file created in root package folder",
+                "Conversion Successful",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+            
+            System.exit(0); // Finish the program
         }
     }
 
