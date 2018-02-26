@@ -75,9 +75,9 @@ public class PythonToAssembly {
         // Enable Interrupts
         assemText[L] = ";"; L++;
         assemText[L] = "enableInterrupts:"; L++;
-        assemText[L] = "SETBSFR R0, 0"; L++;
-        assemText[L] = "SETBSFR R0, 1"; L++;
-        assemText[L] = "SETBSFR R0, 2"; L++;
+        assemText[L] = "SETBSFR SFR0, 0"; L++;
+        assemText[L] = "SETBSFR SFR0, 1"; L++;
+        assemText[L] = "SETBSFR SFR0, 2"; L++;
         assemText[L] = "RET"; L++;
         
         // Add button functionality
