@@ -22,6 +22,8 @@ public class PythonToAssembly {
     private static boolean buttonDetected;
     private static boolean buttonA; 
     private static boolean buttonB;
+    private static boolean ISRA;
+    private static boolean ISRB;
     
     /**
      * ISR0 is reserved for the A button
@@ -54,27 +56,32 @@ public class PythonToAssembly {
         //String[] ISR = new String[30];
         
         boolean buttonDetected = false; // Boolean to keep track of button presses
-        boolean countDec = false; // Checks whether bc has been decremented once
-        int bc=0; // Counter for the number of lines following a button press
+        boolean enableInts = false; // Boolean to check if interrupts should be enabled
 
         while ((line = br.readLine()) != null) { // Loop through the text file       
             assemText[L] = Format(line);
-            L++; // Increment size counter     
- 
-            
+            L++; // Increment size counter      
         }
+        
         assemText[L] = "END"; L++; // All programs must finish with "END"
         in.close(); // Close the buffer
-        
+             
         // Add setUpTimer functionality
         assemText[L] = ";"; L++;
         for (String s: ISRTimer){
             assemText[L] = s;
             L++;
         }
+        // Enable Interrupts
+        assemText[L] = ";"; L++;
+        assemText[L] = "enableInterrupts:"; L++;
+        assemText[L] = "SETBSFR R0, 0"; L++;
+        assemText[L] = "SETBSFR R0, 1"; L++;
+        assemText[L] = "SETBSFR R0, 2"; L++;
+        assemText[L] = "RET"; L++;
         
         // Add button functionality
-        if (buttonA == true){
+        if (ISRA == true){
             assemText[L] = ";"; L++;
             assemText[L] = "ISR0:   ORG 92"; L++;
             for (String s: ISR0){
@@ -86,7 +93,7 @@ public class PythonToAssembly {
             }
             assemText[L] = "RETI"; L++;
         }
-        else if (buttonB == true){
+        if (ISRB == true){
             assemText[L] = ";"; L++;
             assemText[L] = "ISR1:   ORG 104"; L++;
             for (String s: ISR1){
@@ -98,7 +105,7 @@ public class PythonToAssembly {
             }
             assemText[L] = "RETI"; L++;
         }
-        
+      
         // Remove empty and null elements from the array
         String[] outputText = formatOutputText(assemText, L);
         
@@ -137,8 +144,6 @@ public class PythonToAssembly {
                 }
             }
         }
-        
-        
         // Convert ";" to blank lines
         int k = 0;
         for(String s: out){
@@ -146,8 +151,7 @@ public class PythonToAssembly {
                 out[k] = "";
             }
             k++;
-        }
-        
+        }  
         // Remove nulls
         int count = 0;
         for (String s: out){
@@ -155,7 +159,6 @@ public class PythonToAssembly {
                 count++;
             }
         }
-        
         // Move to a new resized array
         String[] finalOut = new String[count];
         for (int i=0;i<count;i++){ // Assign to finalOut
@@ -191,7 +194,6 @@ public class PythonToAssembly {
         String[] setUpText = new String[30];      
         String left = TmrVals[0];
         String right = TmrVals[1];
-        System.out.println(TmrVals[0] + " " + TmrVals[1]);
          
         setUpText[0] = "settingUpTimer:";
         setUpText[1] = "XOR R1,R1,R1";
@@ -229,7 +231,7 @@ public class PythonToAssembly {
 
     private static String Format(String line) {
         String formatted = "";
-
+     
         // Sleep functionality
         if(line.contains("sleep") && buttonDetected == false){
             Sleep sleep = new Sleep(line);
@@ -242,39 +244,40 @@ public class PythonToAssembly {
             LED led = new LED(line);
             formatted = led.getOutputLine();
         }
+        
+        
         // Button functions
-        int bc = 0;
         if((line.contains("button")) && (line.contains("is_pressed"))){
             if(line.contains("button_a")){
-                buttonA = true; 
-                buttonB = false;
+                buttonA = true; buttonB = false;
+                ISRA = true;
             }else if(line.contains("button_b")){
-                buttonB = true;
-                buttonA = false;
+                buttonB = true; buttonA = false;
+                ISRB = true;
             }
             buttonDetected = true;
+            if(ISRA ^ ISRB){formatted = "CALL enableInterrupts";}
             line = "\t"; // So the line is not added to loop array
         } // Count number of lines following the function call
         line = line.replace("\t", "foobar");
         if(buttonDetected==true){
             if(line.contains("foobar")){
-                bc++; // NOTE: First line will need to be removed
                 if(!line.equals("foobar")){
                     line = line.replace("foobar", "");
                     if (buttonA == true){;
                         ISR0.add(line);
-                    }else if(buttonB == true){
+                    }
+                    if(buttonB == true){
                         ISR1.add(line);
                     }
                 }
             }else{ // Reset loop variables
-                buttonDetected = false; // Finished py loop
-                bc = 0;
+                buttonDetected = false; // Finished button loop
             }
 
             // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
         }
-        
+
         return formatted;
     }
 }
