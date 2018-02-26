@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
  */
 public class PythonToAssembly {
     
+    private static String[] ISR = new String[30];
+    static ArrayList<String> loop = new ArrayList<>();
+    static boolean buttonDetected = false;
+    
     /**
      * R1 is reserved for the ISR; Can be used elsewhere but runs the risk of being overwritten
      * R0 is reserved for the LED display
@@ -43,59 +47,21 @@ public class PythonToAssembly {
         int L=1; // Counter for the length of the assembly
         String line;
         System.out.println("Reading python file and converting..");
-        String[] ISR = new String[30];
+        //String[] ISR = new String[30];
         
         boolean buttonDetected = false; // Boolean to keep track of button presses
         boolean countDec = false; // Checks whether bc has been decremented once
         int bc=0; // Counter for the number of lines following a button press
-        ArrayList<String> loop = new ArrayList<>();
         
-        while ((line = br.readLine()) != null) {
-            
-            // Display functions
-            if(line.contains("microbit.display")){
-                LED led = new LED(line);
-                assemText[L]=led.getOutputLine();
-                }
-            
-            // Sleep functionality
-            if(line.contains("sleep")){
-                Sleep sleep = new Sleep(line);
-                String[] TmrVals = sleep.getOutputVals();
-                assemText[L] = "CALL settingUpTimer";
-                ISR = setUpTimerNoReload(TmrVals);
-                
-                 //assemText[L]=sleep.getOutputLine();
-            }
-            
-            if((line.contains("button")) && (line.contains("is_pressed"))){
-                buttonDetected = true;
-                
-                line = "\t"; // So the line is not added to loop array
-            } // Count number of lines following the function call
-            line = line.replace("\t", "foobar");
-            if(buttonDetected==true){
-                if(line.contains("foobar" )){
-                    bc++; // NOTE: First line will need to be removed
-                    line = line.replace("foobar", "");
-                    loop.add(line);
-                    System.out.println(line);
-                }else{
-                    buttonDetected = false; // Finished py loop
-                    bc = 0;
-                }
-                
-                // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
-            }
+        
+        while ((line = br.readLine()) != null) { // Loop through the text file       
+            assemText[L] = Format(line);
             L++; // Increment size counter           
         }
         assemText[L] = "END"; L++; // All programs must finish with "END"
         in.close(); // Close the buffer
         
-        for (String s: loop){
-            System.out.println(s);
-        }
-        
+       
         // Add setUpTimer functionality
         assemText[L] = ";"; L++;
         assemText[L] = ";"; L++;
@@ -238,5 +204,43 @@ public class PythonToAssembly {
         setUpText[index] = "RET"; 
         
         return setUpText;
+    }
+
+    private static String Format(String line) {
+        String formatted = "";
+        
+        // Sleep functionality
+        if(line.contains("sleep")){
+            Sleep sleep = new Sleep(line);
+            String[] TmrVals = sleep.getOutputVals();
+            formatted = "CALL settingUpTimer";
+            ISR = setUpTimerNoReload(TmrVals);
+        }
+        // Display functions
+        if(line.contains("microbit.display")){
+            LED led = new LED(line);
+            formatted = led.getOutputLine();
+        }
+        // Button functions
+        int bc = 0;
+        if((line.contains("button")) && (line.contains("is_pressed"))){
+            buttonDetected = true;
+            line = "\t"; // So the line is not added to loop array
+        } // Count number of lines following the function call
+        line = line.replace("\t", "foobar");
+        if(buttonDetected==true){
+            if(line.contains("foobar" )){
+                bc++; // NOTE: First line will need to be removed
+                line = line.replace("foobar", "");
+                loop.add(line);
+            }else{ // Reset loop variables
+                buttonDetected = false; // Finished py loop
+                bc = 0;
+            }
+
+            // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
+        }
+        
+        return formatted;
     }
 }
