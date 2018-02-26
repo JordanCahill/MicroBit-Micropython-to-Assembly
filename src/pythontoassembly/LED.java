@@ -44,14 +44,10 @@ public final class LED {
         Formatter delim = new Formatter(line);
         String[] coordinates = delim.delimit();
         String command = "; Unknown problem converting set_pixel() function"; // Default assignment
-        //String[] coordinates = delimit(line); // Calls the delimit function to retrieve the (x,y) LED coordinate
-        
-       
+               
         String x = coordinates[0];
         String y = coordinates[1];
         String intensity = coordinates[2];
-        intensity = intensity.replace(")","");
-
         
         // Coordinates must be between (0,0) and (3,3)
         if (Integer.parseInt(x)>3 || Integer.parseInt(y)>3){

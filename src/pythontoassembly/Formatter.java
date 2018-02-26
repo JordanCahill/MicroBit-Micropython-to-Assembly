@@ -25,6 +25,9 @@ class Formatter {
         String[] delimitted = null;
         delimitted = variables;
         
+        for(int i=0;i<delimitted.length;i++){
+            delimitted[i] = delimitted[i].replace(")","");
+        }
        
         return delimitted;
     }

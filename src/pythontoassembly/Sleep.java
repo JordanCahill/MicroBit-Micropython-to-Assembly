@@ -33,7 +33,7 @@ class Sleep {
         // No "^" operator in Java
         double powerOfMinus9 = pow(10,-9);
         
-        String timeStr = dlmtd[0].replace(")",""); // Sleep value in seconds
+        String timeStr = dlmtd[0]; // Sleep value in seconds
         
         // Calculate number of cycles required based on a 25 MHz clk cycle
         int cycles = (int) ((Double.valueOf(timeStr))/(80*(powerOfMinus9)));
