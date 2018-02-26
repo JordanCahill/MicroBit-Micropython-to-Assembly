@@ -189,9 +189,28 @@ public final class LED {
     
     ArrayList<String> displayImage(){
         Formatter delim = new Formatter(inputLine);
-        String[] image = delim.delimit();
-        System.out.println(image[0]);
-        return null;
+        String[] args = delim.delimit(); String image = args[0];
+        ArrayList<String> regSet = new ArrayList<>();
+        
+        switch (image){
+            case "Image.ARROW_NE":
+                regSet.add("XOR R0,R0,R0 ; Displaying image: " + image);
+                regSet.add("SETBR R0, 3"); regSet.add("SETBR R0, 4"); regSet.add("SETBR R0, 6");
+                regSet.add("SETBR R0, 8"); regSet.add("SETBR R0, 9"); regSet.add("SETBR R0, 12");
+                regSet.add("SETBR R0, 13"); regSet.add("SETBR R0, 14 ; End of image: "+ image);
+                break;
+            case "Image.ARROW_NW":
+                regSet.add("XOR R0,R0,R0 ; Displaying image: " + image);
+                regSet.add("SETBR R0, 0"); regSet.add("SETBR R0, 5"); regSet.add("SETBR R0, 7");
+                regSet.add("SETBR R0, 10"); regSet.add("SETBR R0, 11"); regSet.add("SETBR R0, 13");
+                regSet.add("SETBR R0, 14"); regSet.add("SETBR R0, 15 ; End of image: "+ image);
+                break;
+            default:
+                regSet.add("XOR R0,R0,R0 ; Unknown image");
+                regSet.add("INV R0, R0 ; Displaying default image");
+                break;
+        }
+        return regSet;
     }
 
     String getOutputLine() { // Passes the assembly command to the main method when called

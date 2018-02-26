@@ -24,6 +24,7 @@ public class PythonToAssembly {
     private static boolean buttonB;
     private static boolean ISRA;
     private static boolean ISRB;
+    private static ArrayList<String> displayImage = new ArrayList<>();
     
     /**
      * ISR0 is reserved for the A button
@@ -60,7 +61,16 @@ public class PythonToAssembly {
 
         while ((line = br.readLine()) != null) { // Loop through the text file       
             assemText[L] = Format(line);
+            
+            if (assemText[L].contains("Displaying image for line")){
+                for (String s: displayImage){
+                    assemText[L] = s;
+                    L++;
+                }
+            }
+                
             L++; // Increment size counter      
+                    
         }
         
         assemText[L] = "END"; L++; // All programs must finish with "END"
@@ -243,9 +253,9 @@ public class PythonToAssembly {
             formatted = led.getOutputLine();
         }
         if(line.contains("display.show")){
-
             LED led = new LED(line);
-            ArrayList<String> dispImage = led.displayImage();
+            displayImage = led.displayImage();
+            formatted = "; Displaying image for line: " + line;
         }
                 
         
