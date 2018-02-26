@@ -1,6 +1,8 @@
 
 package pythontoassembly;
 
+import java.util.ArrayList;
+
 /**
  * Constructor used to call methods that can convert micropython LED commands for an SCC
  * Assumes the SCC is using R2 as a 4x4 16-bit LED array in the following format:
@@ -188,6 +190,13 @@ public final class LED {
         }else{command = "; Python syntax error at 'setPixel()', intensity must be an integer between 0 and 9";}
         return command;
     }
+    
+    ArrayList<String> displayImage(){
+        Formatter delim = new Formatter(inputLine);
+        String[] image = delim.delimit();
+        System.out.println(image[0]);
+        return null;
+    }
 
     String getOutputLine() { // Passes the assembly command to the main method when called
         return outputLine;
@@ -197,4 +206,5 @@ public final class LED {
     private void clearPixels(String inputLine) {
         outputLine = "XOR R2, R2, R2 ; Clear R2";
     }
+
 }

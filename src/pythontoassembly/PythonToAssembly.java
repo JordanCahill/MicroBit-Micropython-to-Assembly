@@ -242,7 +242,12 @@ public class PythonToAssembly {
             LED led = new LED(line);
             formatted = led.getOutputLine();
         }
-        
+        if(line.contains("display.show")){
+
+            LED led = new LED(line);
+            ArrayList<String> dispImage = led.displayImage();
+        }
+                
         
         // Button functions
         if((line.contains("button")) && (line.contains("is_pressed"))){
