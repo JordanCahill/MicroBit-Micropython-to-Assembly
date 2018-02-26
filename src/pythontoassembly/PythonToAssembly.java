@@ -16,12 +16,17 @@ import javax.swing.JOptionPane;
  */
 public class PythonToAssembly {
     
-    private static String[] ISR = new String[30];
-    static ArrayList<String> loop = new ArrayList<>();
-    static boolean buttonDetected = false;
+    private static String[] ISRTimer = new String[30];
+    private static ArrayList<String> ISR0 = new ArrayList<>();
+    private static ArrayList<String> ISR1 = new ArrayList<>();
+    private static boolean buttonDetected;
+    private static boolean buttonA; 
+    private static boolean buttonB;
     
     /**
-     * R1 is reserved for the ISR; Can be used elsewhere but runs the risk of being overwritten
+     * ISR0 is reserved for the A button
+     * ISR1 is reserved for the B button
+     * R1 is reserved for the Timer ISR; Can be used elsewhere but runs the risk of being overwritten
      * R0 is reserved for the LED display
      * 
      * @param args the command line arguments
@@ -34,7 +39,6 @@ public class PythonToAssembly {
             directory = gui.getDirectory();
             TimeUnit.SECONDS.sleep(1);
         }
-        
         
         // Read in the file
         //FileReader in = new FileReader("C:/Users/Jorda/Documents/College/SampleFile.py");
@@ -52,27 +56,51 @@ public class PythonToAssembly {
         boolean buttonDetected = false; // Boolean to keep track of button presses
         boolean countDec = false; // Checks whether bc has been decremented once
         int bc=0; // Counter for the number of lines following a button press
-        
-        
+
         while ((line = br.readLine()) != null) { // Loop through the text file       
             assemText[L] = Format(line);
-            L++; // Increment size counter           
+            L++; // Increment size counter     
+ 
+            
         }
         assemText[L] = "END"; L++; // All programs must finish with "END"
         in.close(); // Close the buffer
         
-       
         // Add setUpTimer functionality
         assemText[L] = ";"; L++;
-        assemText[L] = ";"; L++;
-        for (String s: ISR){
+        for (String s: ISRTimer){
             assemText[L] = s;
             L++;
         }
         
+        // Add button functionality
+        if (buttonA == true){
+            assemText[L] = ";"; L++;
+            assemText[L] = "ISR0:   ORG 92"; L++;
+            for (String s: ISR0){
+                String f = Format(s);
+                if(s != null){
+                    assemText[L] = f;
+                    L++;
+                }
+            }
+            assemText[L] = "RETI"; L++;
+        }
+        else if (buttonB == true){
+            assemText[L] = ";"; L++;
+            assemText[L] = "ISR1:   ORG 104"; L++;
+            for (String s: ISR1){
+                String f = Format(s);
+                if(s != null){
+                    assemText[L] = f;
+                    L++;
+                }
+            }
+            assemText[L] = "RETI"; L++;
+        }
+        
         // Remove empty and null elements from the array
         String[] outputText = formatOutputText(assemText, L);
-
         
         CreateAsmFile(outputText); // Output final text to a .asm file
         
@@ -88,7 +116,6 @@ public class PythonToAssembly {
         }
     }
 
-    
     /**
      * Method used to remove nulls and empties from a String array and resize the array
      * 
@@ -111,15 +138,14 @@ public class PythonToAssembly {
             }
         }
         
-        int k =0;
+        
         // Convert ";" to blank lines
-        for (String outputList1 : outputList) {
-            if (outputList1 != null) {
-                if (outputList1.equals(";")) {
-                    out[k] = "";
-                }
-            k++;
+        int k = 0;
+        for(String s: out){
+            if (s!= null && s.equals(";")){
+                out[k] = "";
             }
+            k++;
         }
         
         // Remove nulls
@@ -165,37 +191,32 @@ public class PythonToAssembly {
         String[] setUpText = new String[30];      
         String left = TmrVals[0];
         String right = TmrVals[1];
+        System.out.println(TmrVals[0] + " " + TmrVals[1]);
          
         setUpText[0] = "settingUpTimer:";
         setUpText[1] = "XOR R1,R1,R1";
         
         int index = 2;
         
-        try{
-            for(int i = 0; i<16; i++){
-                if ((Character.getNumericValue(left.charAt(i))) == 1){
-                    setUpText[index] = "SETBR R1, " + i;
-                    index++;
-                }
+        int j = left.length()-1; // Index used to set bit
+        for(int i = 0; i<left.length(); i++){
+            if ((Character.getNumericValue(left.charAt(i))) == 1){
+                setUpText[index] = "SETBR R1, " + j; index++;
             }
-        }catch(StringIndexOutOfBoundsException e){ // If the left side isn't 16 bits
-                    setUpText[index] = ""; index++;
+            j--;
         }
-        
+
         setUpText[index] = "MOVRSFR SFR1, R1"; index++;
         setUpText[index] = "XOR R1,R1,R1"; index++;
-        
-        try{
-            for(int i = 0; i<16; i++){
-                if ((Character.getNumericValue(right.charAt(i))) == 1){
-                    setUpText[index] = "SETBR R1, " + i;
-                    index++;
-                }
+
+        j = right.length()-1;
+        for(int i = 0; i<right.length(); i++){
+            if ((Character.getNumericValue(right.charAt(i))) == 1){
+                setUpText[index] = "SETBR R1, " + j; index++;
             }
-        }catch(StringIndexOutOfBoundsException e){
-                    setUpText[index] = ""; index++;
+            j--;
         }
-        
+
         // Set up global flags
         setUpText[index] = "SETBSFR SFR0, 0 ; enable global interrupts"; index++;
         setUpText[index] = "SETBSFR SFR0, 3 ; enable timer interrupt"; index++;
@@ -208,31 +229,44 @@ public class PythonToAssembly {
 
     private static String Format(String line) {
         String formatted = "";
-        
+
         // Sleep functionality
-        if(line.contains("sleep")){
+        if(line.contains("sleep") && buttonDetected == false){
             Sleep sleep = new Sleep(line);
             String[] TmrVals = sleep.getOutputVals();
             formatted = "CALL settingUpTimer";
-            ISR = setUpTimerNoReload(TmrVals);
+            ISRTimer = setUpTimerNoReload(TmrVals);
         }
         // Display functions
-        if(line.contains("microbit.display")){
+        if(line.contains("microbit.display") && buttonDetected == false){
             LED led = new LED(line);
             formatted = led.getOutputLine();
         }
         // Button functions
         int bc = 0;
         if((line.contains("button")) && (line.contains("is_pressed"))){
+            if(line.contains("button_a")){
+                buttonA = true; 
+                buttonB = false;
+            }else if(line.contains("button_b")){
+                buttonB = true;
+                buttonA = false;
+            }
             buttonDetected = true;
             line = "\t"; // So the line is not added to loop array
         } // Count number of lines following the function call
         line = line.replace("\t", "foobar");
         if(buttonDetected==true){
-            if(line.contains("foobar" )){
+            if(line.contains("foobar")){
                 bc++; // NOTE: First line will need to be removed
-                line = line.replace("foobar", "");
-                loop.add(line);
+                if(!line.equals("foobar")){
+                    line = line.replace("foobar", "");
+                    if (buttonA == true){;
+                        ISR0.add(line);
+                    }else if(buttonB == true){
+                        ISR1.add(line);
+                    }
+                }
             }else{ // Reset loop variables
                 buttonDetected = false; // Finished py loop
                 bc = 0;
