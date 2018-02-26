@@ -48,6 +48,7 @@ public class PythonToAssembly {
         boolean buttonDetected = false; // Boolean to keep track of button presses
         boolean countDec = false; // Checks whether bc has been decremented once
         int bc=0; // Counter for the number of lines following a button press
+        ArrayList<String> loop = new ArrayList<>();
         
         while ((line = br.readLine()) != null) {
             
@@ -67,11 +68,9 @@ public class PythonToAssembly {
                  //assemText[L]=sleep.getOutputLine();
             }
             
-
-            String buttonString; // To be stored in an array and adjusted appopriately
             if((line.contains("button")) && (line.contains("is_pressed"))){
                 buttonDetected = true;
-                buttonString = line;
+                
                 line = "\t"; // So the line is not added to loop array
             } // Count number of lines following the function call
             line = line.replace("\t", "foobar");
@@ -79,20 +78,23 @@ public class PythonToAssembly {
                 if(line.contains("foobar" )){
                     bc++; // NOTE: First line will need to be removed
                     line = line.replace("foobar", "");
+                    loop.add(line);
                     System.out.println(line);
                 }else{
                     buttonDetected = false; // Finished py loop
+                    bc = 0;
                 }
                 
                 // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
             }
-            
-
-            L++; // Increment size counter
-            
+            L++; // Increment size counter           
         }
         assemText[L] = "END"; L++; // All programs must finish with "END"
         in.close(); // Close the buffer
+        
+        for (String s: loop){
+            System.out.println(s);
+        }
         
         // Add setUpTimer functionality
         assemText[L] = ";"; L++;
