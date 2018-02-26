@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class PythonToAssembly {
     
-    private static String[] ISRTimer = new String[30];
+    private static ArrayList<String> ISRTimer = new ArrayList<>();
     private static ArrayList<String> ISR0 = new ArrayList<>();
     private static ArrayList<String> ISR1 = new ArrayList<>();
     private static boolean buttonDetected;
@@ -189,42 +189,40 @@ public class PythonToAssembly {
         System.out.println("File written to 'PythonToAssembly' folder.");
     }
 
-    private static String[] setUpTimerNoReload(String[] TmrVals) {
+    private static ArrayList<String> setUpTimerNoReload(String[] TmrVals) {
         
-        String[] setUpText = new String[30];      
+        ArrayList<String> setUpText = new ArrayList<>();      
         String left = TmrVals[0];
         String right = TmrVals[1];
          
-        setUpText[0] = "settingUpTimer:";
-        setUpText[1] = "XOR R1,R1,R1";
-        
-        int index = 2;
-        
+        setUpText.add("settingUpTimer:");
+        setUpText.add("XOR R1,R1,R1");
+         
         int j = left.length()-1; // Index used to set bit
         for(int i = 0; i<left.length(); i++){
             if ((Character.getNumericValue(left.charAt(i))) == 1){
-                setUpText[index] = "SETBR R1, " + j; index++;
+                setUpText.add("SETBR R1, " + j);
             }
             j--;
         }
 
-        setUpText[index] = "MOVRSFR SFR1, R1"; index++;
-        setUpText[index] = "XOR R1,R1,R1"; index++;
+        setUpText.add("MOVRSFR SFR1, R1");
+        setUpText.add("XOR R1,R1,R1");
 
         j = right.length()-1;
         for(int i = 0; i<right.length(); i++){
             if ((Character.getNumericValue(right.charAt(i))) == 1){
-                setUpText[index] = "SETBR R1, " + j; index++;
+                setUpText.add("SETBR R1, " + j);
             }
             j--;
         }
 
         // Set up global flags
-        setUpText[index] = "SETBSFR SFR0, 0 ; enable global interrupts"; index++;
-        setUpText[index] = "SETBSFR SFR0, 3 ; enable timer interrupt"; index++;
-        setUpText[index] = "SETBSFR SFR0, 6 ; down timer"; index++;
-        setUpText[index] = "SETBSFR SFR0, 4 ; enable timer. Include as last bit set"; index++;
-        setUpText[index] = "RET"; 
+        setUpText.add("SETBSFR SFR0, 0 ; enable global interrupts");
+        setUpText.add("SETBSFR SFR0, 3 ; enable timer interrupt");
+        setUpText.add("SETBSFR SFR0, 6 ; down timer");
+        setUpText.add("SETBSFR SFR0, 4 ; enable timer. Include as last bit set");
+        setUpText.add("RET"); 
         
         return setUpText;
     }
@@ -240,7 +238,7 @@ public class PythonToAssembly {
             ISRTimer = setUpTimerNoReload(TmrVals);
         }
         // Display functions
-        if(line.contains("microbit.display") && buttonDetected == false){
+        if(line.contains("display.set_pixel") && buttonDetected == false){
             LED led = new LED(line);
             formatted = led.getOutputLine();
         }
