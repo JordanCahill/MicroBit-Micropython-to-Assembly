@@ -36,6 +36,10 @@ public class PythonToAssembly {
      */
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
         
+        GUIMainMenu test = new GUIMainMenu();
+      
+        
+        
         String directory = null;
         GUI gui = new GUI();
         while (directory==null){
@@ -200,6 +204,8 @@ public class PythonToAssembly {
     }
 
     private static ArrayList<String> setUpTimerNoReload(String[] TmrVals) {
+        
+        // Add boolean parameter for "if reload or not" 
         
         ArrayList<String> setUpText = new ArrayList<>();      
         String left = TmrVals[0];
