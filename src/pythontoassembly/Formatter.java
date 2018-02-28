@@ -1,6 +1,10 @@
 
 package pythontoassembly;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Jordan Cahill
@@ -80,6 +84,30 @@ class Formatter {
         }
         
         return finalOut;
+    }
+
+    /**
+     * Method used to output the formatted text to .asm file located in the src folder
+     * 
+     * @param aThis pass in the JFrame so it can be closed
+     * @param outputText the String array to output
+     * @throws FileNotFoundException 
+     */
+    void CreateAsmFile(JFrame aThis, String[] outputText) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter("output.asm");
+        for (String s: outputText){
+            out.println(s);
+        }
+        out.close();
+        System.out.println("\nFinal text output:");
+        System.out.println("____________________________________________\n");
+        for (String s: outputText){
+            System.out.println(s);
+        }
+        System.out.println("\n____________________________________________\n");
+        System.out.println("File written to 'PythonToAssembly' folder.");
+        
+        aThis.setVisible(false);
     }
     
     

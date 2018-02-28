@@ -246,81 +246,18 @@ public class GUIPythonIn extends javax.swing.JFrame {
             assemText[L] = "RETI"; L++;
         }
       
-        Formatter rmvNullAndEmpty = new Formatter();
-        String[] outputText = rmvNullAndEmpty.formatOutputText(assemText,L);
+        Formatter formatOut = new Formatter();
+        String[] outputText = formatOut.formatOutputText(assemText,L);
         // Remove empty and null elements from the array
         //String[] outputText = formatOutputText(assemText, L);
         
         try {
-            CreateAsmFile(outputText); // Output final text to a .asm file
+            formatOut.CreateAsmFile(this, outputText); // Output final text to a .asm file
         } catch (FileNotFoundException ex) {}
     }//GEN-LAST:event_SubmitDirectoryButtonActionPerformed
 
-    /**
-     * Method used to remove nulls and empties from a String array and resize the array
-     * 
-     * @param outputList the list to be resized with nulls and empties removed
-     * @param L the size of the allocated space
-     * @return the formatted String array
-     */
-    private static String[] formatOutputText(String[] outputList, int L) {
-        
-        String[] out = new String[L];
-        int j = 0;
-        
-        // Remove blank spaces
-        for(int i = 0; i<outputList.length; i++) {
-            if(outputList[i]!=null){
-                if(!outputList[i].equals("")){
-                    out[j] = outputList[i];
-                    j++;
-                }
-            }
-        }
-        // Convert ";" to blank lines
-        int k = 0;
-        for(String s: out){
-            if (s!= null && s.equals(";")){
-                out[k] = "";
-            }
-            k++;
-        }  
-        // Remove nulls
-        int count = 0;
-        for (String s: out){
-            if(s != null){
-                count++;
-            }
-        }
-        // Move to a new resized array
-        String[] finalOut = new String[count];
-        for (int i=0;i<count;i++){ // Assign to finalOut
-            finalOut[i] = out[i];
-        }
-        
-        return finalOut;
-    }
 
-    /**
-     * Method used to output the formatted text to .asm file located in the src folder
-     * 
-     * @param outputText the String array to output
-     * @throws FileNotFoundException 
-     */
-    private static void CreateAsmFile(String[] outputText) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("output.asm");
-        for (String s: outputText){
-            out.println(s);
-        }
-        out.close();
-        System.out.println("\nFinal text output:");
-        System.out.println("____________________________________________\n");
-        for (String s: outputText){
-            System.out.println(s);
-        }
-        System.out.println("\n____________________________________________\n");
-        System.out.println("File written to 'PythonToAssembly' folder.");
-    }
+    
 
     private static ArrayList<String> setUpTimerNoReload(String[] TmrVals) {
         
