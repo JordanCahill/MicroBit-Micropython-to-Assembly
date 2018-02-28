@@ -1,4 +1,4 @@
-package pythontoassembly;
+package sccassemblyparser;
 
 import java.io.BufferedReader;
 import java.io.File;

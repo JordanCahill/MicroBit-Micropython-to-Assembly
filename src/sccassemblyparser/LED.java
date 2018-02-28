@@ -1,5 +1,5 @@
 
-package pythontoassembly;
+package sccassemblyparser;
 
 import java.util.ArrayList;
 

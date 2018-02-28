@@ -1,4 +1,4 @@
-package pythontoassembly;
+package sccassemblyparser;
 
 /**
  *
