@@ -36,7 +36,7 @@ public class PythonToAssembly {
      */
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
         
-        GUIMainMenu test = new GUIMainMenu();
+        //GUIMainMenu test = new GUIMainMenu();
       
         
         

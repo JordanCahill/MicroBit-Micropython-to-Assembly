@@ -9,9 +9,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -59,14 +62,14 @@ public class GUIMainMenu extends javax.swing.JFrame {
         jButton1.setMinimumSize(new java.awt.Dimension(83, 23));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                PythonButtonActionPerformed(evt);
             }
         });
 
         jButton2.setText("JavaScript");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                JavascriptButtonActionPerformed(evt);
             }
         });
 
@@ -75,13 +78,14 @@ public class GUIMainMenu extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Welcome to the SCC Assembly Parser!");
 
+        jLabel2.setFont(new java.awt.Font("Lucida Sans", 0, 11)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 51));
         jLabel2.setText("Please select the language you with to translate:");
 
         jButton3.setText("Download Manual");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                ManualButtonActionPerformed(evt);
             }
         });
 
@@ -128,15 +132,17 @@ public class GUIMainMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void PythonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PythonButtonActionPerformed
+        this.setVisible(false);
+        GUIPythonIn pyin = new GUIPythonIn();
+    }//GEN-LAST:event_PythonButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void JavascriptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JavascriptButtonActionPerformed
+        this.setVisible(false);
+        GUIJavascriptIn jsin = new GUIJavascriptIn();
+    }//GEN-LAST:event_JavascriptButtonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void ManualButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ManualButtonActionPerformed
         
         // Import manual from resources 
         FileReader in = null;
@@ -157,8 +163,7 @@ public class GUIMainMenu extends javax.swing.JFrame {
             }   
         }catch (IOException ex) {
         }
-        System.out.println("Original length: " + length);
-        
+          
         String[] Manual = new String[length];
         
         // Store the manual as a .txt array
@@ -198,13 +203,35 @@ public class GUIMainMenu extends javax.swing.JFrame {
             fileStream.println(s);
         } 
         fileStream.flush(); fileStream.close();
+        
+        JOptionPane.showConfirmDialog(null,
+                "SCC Parser manual downloaded to " + chooser.getSelectedFile().toString(),
+                "Downloaded Manual",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
     
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_ManualButtonActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | 
+                 IllegalAccessException | 
+                 InstantiationException | 
+                 UnsupportedLookAndFeelException ex) {}
+        //</editor-fold>
+        //</editor-fold>
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
