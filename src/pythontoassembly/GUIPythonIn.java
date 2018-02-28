@@ -185,7 +185,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
         //String[] ISR = new String[30];
         
         boolean buttonDetected = false; // Boolean to keep track of button presses
-        boolean enableInts = false; // Boolean to check if interrupts should be enabled
+        
         try {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
@@ -255,49 +255,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
             formatOut.CreateAsmFile(this, outputText); // Output final text to a .asm file
         } catch (FileNotFoundException ex) {}
     }//GEN-LAST:event_SubmitDirectoryButtonActionPerformed
-
-
     
-
-    private static ArrayList<String> setUpTimerNoReload(String[] TmrVals) {
-        
-        // Add boolean parameter for "if reload or not" 
-        
-        ArrayList<String> setUpText = new ArrayList<>();      
-        String left = TmrVals[0];
-        String right = TmrVals[1];
-         
-        setUpText.add("settingUpTimer:");
-        setUpText.add("XOR R1,R1,R1");
-         
-        int j = left.length()-1; // Index used to set bit
-        for(int i = 0; i<left.length(); i++){
-            if ((Character.getNumericValue(left.charAt(i))) == 1){
-                setUpText.add("SETBR R1, " + j);
-            }
-            j--;
-        }
-
-        setUpText.add("MOVRSFR SFR1, R1");
-        setUpText.add("XOR R1,R1,R1");
-
-        j = right.length()-1;
-        for(int i = 0; i<right.length(); i++){
-            if ((Character.getNumericValue(right.charAt(i))) == 1){
-                setUpText.add("SETBR R1, " + j);
-            }
-            j--;
-        }
-
-        // Set up global flags
-        setUpText.add("SETBSFR SFR0, 0 ; enable global interrupts");
-        setUpText.add("SETBSFR SFR0, 3 ; enable timer interrupt");
-        setUpText.add("SETBSFR SFR0, 6 ; down timer");
-        setUpText.add("SETBSFR SFR0, 4 ; enable timer. Include as last bit set");
-        setUpText.add("RET"); 
-        
-        return setUpText;
-    }
 
     private static String Format(String line) {
         String formatted = "";
@@ -307,7 +265,8 @@ public class GUIPythonIn extends javax.swing.JFrame {
             Sleep sleep = new Sleep(line);
             String[] TmrVals = sleep.getOutputVals();
             formatted = "CALL settingUpTimer";
-            ISRTimer = setUpTimerNoReload(TmrVals);
+            Timer setupNoReload = new Timer();
+            ISRTimer = setupNoReload.setUpTimerNoReload(TmrVals);
         }
         // Display functions
         if(line.contains("display.set_pixel") && buttonDetected == false){
