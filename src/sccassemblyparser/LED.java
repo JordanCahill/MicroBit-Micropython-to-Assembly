@@ -41,7 +41,6 @@ public final class LED {
      */
     String toggleLED(String line) {
   
-        System.out.println(line);
         Formatter delim = new Formatter(line);
         String[] coordinates = delim.delimit();
         String command = "; Unknown problem converting set_pixel() function"; // Default assignment

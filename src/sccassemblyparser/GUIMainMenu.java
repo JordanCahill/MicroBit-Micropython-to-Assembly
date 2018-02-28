@@ -176,20 +176,10 @@ public class GUIMainMenu extends javax.swing.JFrame {
         catch(IOException e){}
         
         
-        JFileChooser chooser = new JFileChooser(); 
-        String choosertitle = "Choose where to save manual..";
-        chooser.setCurrentDirectory(new java.io.File("./.."));
-        chooser.setDialogTitle(choosertitle);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
         
-        String directory = null;
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            directory = chooser.getSelectedFile().toString() + "\\Manual.txt";
-        }else{
-            return;
-        }
         
+        Formatter getDir = new Formatter();
+        String directory = getDir.getOutputDirectory()  + "\\Manual.txt";
         
         PrintStream fileStream = null;
         try {
@@ -202,7 +192,7 @@ public class GUIMainMenu extends javax.swing.JFrame {
         fileStream.flush(); fileStream.close();
         
         JOptionPane.showConfirmDialog(null,
-                "SCC Parser manual downloaded to " + chooser.getSelectedFile().toString(),
+                "SCC Parser manual downloaded to " + directory,
                 "Downloaded Manual",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.PLAIN_MESSAGE);

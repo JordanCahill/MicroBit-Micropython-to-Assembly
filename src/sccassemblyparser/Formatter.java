@@ -3,7 +3,9 @@ package sccassemblyparser;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -105,9 +107,35 @@ class Formatter {
             System.out.println(s);
         }
         System.out.println("\n____________________________________________\n");
-        System.out.println("File written to 'PythonToAssembly' folder.");
+        System.out.println("Assembly File generated successfully.");
         
+        String directory = getOutputDirectory() + "\\Output.asm";
+        
+        JOptionPane.showConfirmDialog(null,
+                "Assembly file generated to " + directory,
+                "Success!",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+        
+        // Close the program
         aThis.setVisible(false);
+        System.exit(0);
+    }
+    
+    public String getOutputDirectory(){
+        JFileChooser chooser = new JFileChooser(); 
+        String choosertitle = "Please choose where to save file..";
+        chooser.setCurrentDirectory(new java.io.File("./.."));
+        chooser.setDialogTitle(choosertitle);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        
+        String directory = null;
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            return directory = chooser.getSelectedFile().toString();
+        }else{
+            return null;
+        }
     }
     
     

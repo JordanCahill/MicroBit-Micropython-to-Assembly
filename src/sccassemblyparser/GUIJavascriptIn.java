@@ -252,7 +252,6 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         if(line.contains("led.plot") && buttonDetected == false){
             LED led = new LED(line);
             formatted = led.getOutputLine();
-            System.out.println(formatted);
         }
         if(line.contains("display.show")){
             LED led = new LED(line);
