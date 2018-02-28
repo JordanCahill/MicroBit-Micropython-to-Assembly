@@ -25,8 +25,8 @@ public final class LED {
     public LED(String in){
         this.inputLine = in;
         
-        if (inputLine.contains("set_pixel")){
-            outputLine = setPixel(inputLine);
+        if (inputLine.contains("set_pixel")||inputLine.contains("plot")){
+            outputLine = toggleLED(inputLine);
         }else if (inputLine.contains("clear")){
             clearPixels(inputLine);
         }
@@ -39,15 +39,19 @@ public final class LED {
      * @param line input line need for coordinates
      * @return output command
      */
-    String setPixel(String line) {
+    String toggleLED(String line) {
   
+        System.out.println(line);
         Formatter delim = new Formatter(line);
         String[] coordinates = delim.delimit();
         String command = "; Unknown problem converting set_pixel() function"; // Default assignment
                
         String x = coordinates[0];
         String y = coordinates[1];
-        String intensity = coordinates[2];
+        int intensity = 100; // Set high to account for JavaScript case
+        if(line.contains("display")){
+            intensity = Integer.valueOf(coordinates[2]);
+        }
         
         // Coordinates must be between (0,0) and (3,3)
         if (Integer.parseInt(x)>3 || Integer.parseInt(y)>3){
@@ -55,7 +59,7 @@ public final class LED {
         }
         
         // If intensity between 0 and 4, turn LED off
-        if (((Integer.valueOf(intensity))<5) && ((Integer.valueOf(intensity))>=0)){
+        if ((line.contains("unplot")||(intensity<5) && (intensity>=0))){
             // Must check 4 x-values for each y-value and return an appropriate command
             switch (y){
                 case "0":
@@ -119,7 +123,7 @@ public final class LED {
                             break;
                     } break;
             } // If intensity between 5 and 9, turn LED on
-        }else if (((Integer.valueOf(intensity))>=5) && ((Integer.valueOf(intensity))<10)){
+        }else if ((line.contains("plot")||((intensity>=5) && (intensity<10)))){
             // Must check 4 x-values for each y-value and return an appropriate command
             switch (y){
                 case "0":

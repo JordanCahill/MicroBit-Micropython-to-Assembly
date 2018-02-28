@@ -171,12 +171,12 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
                 
-                if (assemText[L].contains("Displaying image for line")){
-                    for (String s: displayImage){
-                        assemText[L] = s;
-                        L++;
-                    }
-                }
+//                if (assemText[L].contains("Displaying image for line")){
+//                    for (String s: displayImage){
+//                        assemText[L] = s;
+//                        L++;
+//                    }
+//                }
                 
                 L++; // Increment size counter
                     
@@ -249,9 +249,10 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             ISRTimer = setupNoReload.setUpTimerNoReload(TmrVals);
         }
         // Display functions
-        if(line.contains("display.set_pixel") && buttonDetected == false){
+        if(line.contains("led.plot") && buttonDetected == false){
             LED led = new LED(line);
             formatted = led.getOutputLine();
+            System.out.println(formatted);
         }
         if(line.contains("display.show")){
             LED led = new LED(line);
