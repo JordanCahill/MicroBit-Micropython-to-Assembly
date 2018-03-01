@@ -1,18 +1,19 @@
 package sccassemblyparser;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
-
 /**
  *
  * @author Jorda
@@ -141,59 +142,18 @@ public class GUIMainMenu extends javax.swing.JFrame {
 
     private void ManualButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ManualButtonActionPerformed
         
-        // Import manual from resources 
-        FileReader in = null;
-        try{
-            in = new FileReader("sccparsermanual.txt");
-        }catch(FileNotFoundException ex) {
-            System.out.println("File not found");
-        }
-
-        // Get length of file
-        BufferedReader br = new BufferedReader(in);
-        String a; int length = 0;
-        ArrayList<String> lines = new ArrayList<>();
-        try {
-            while((a = br.readLine()) != null){
-                length++; 
-                lines.add(a);
-            }   
-        }catch (IOException ex) {
-        }
-          
-        String[] Manual = new String[length];
-        
-        // Store the manual as a .txt array
-        int lineCount = 0; String line;
-        for (String s: lines){
-            Manual[lineCount] = lines.get(lineCount);
-            lineCount++;
-        }
-        
-        try{
-            br.close(); in.close();
-        }
-        catch(IOException e){}
-        
-        
-        
-        
-        Formatter getDir = new Formatter();
-        String directory = getDir.getOutputDirectory()  + "\\Manual.txt";
-        
-        PrintStream fileStream = null;
-        try {
-             fileStream = new PrintStream(new File(directory));
-        } catch (FileNotFoundException ex){}
-
-        for(String s: Manual){
-            fileStream.println(s);
-        } 
-        fileStream.flush(); fileStream.close();
-        
+        // TODO After manual is written, host it and add url below
+        /*
+        try { 
+            String url = "https://www.google.com";
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+        }catch (java.io.IOException e) {
+            System.out.println(e.getMessage());
+        }*/
+         
         JOptionPane.showConfirmDialog(null,
-                "SCC Parser manual downloaded to " + directory,
-                "Downloaded Manual",
+                "Not supported yet - This button will eventually take the user to an online page containing the manual",
+                "Oops",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.PLAIN_MESSAGE);
     

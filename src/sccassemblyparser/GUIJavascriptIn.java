@@ -171,13 +171,8 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
                 
-//                if (assemText[L].contains("Displaying image for line")){
-//                    for (String s: displayImage){
-//                        assemText[L] = s;
-//                        L++;
-//                    }
-//                }
-                
+                //TODO: Add support for multiple returns (ie. within button press loops)
+                             
                 L++; // Increment size counter
                     
             }
@@ -251,7 +246,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         // Display functions
         if(line.contains("led.plot") && buttonDetected == false){
             LED led = new LED(line);
-            formatted = led.getOutputLine();
+            formatted = led.getOutputLine(); // Get output ASM instruction
         }
         if(line.contains("display.show")){
             LED led = new LED(line);
