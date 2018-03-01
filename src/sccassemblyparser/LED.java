@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * 7  | 6  | 5  | 4
  * 3  | 2  | 1  | 0
  * 
- * where bit 0 corresponds to coordinates (3,0) and bit 12 corresponds to (3,3) etc. 
+ * where bit 15 corresponds to coordinates (0,0) and bit 12 corresponds to (3,0) etc. 
  * 
  * @author Jordan Cahill
  * @date 07-Feb-2018
@@ -64,34 +64,19 @@ public final class LED {
                 case "0":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 0";
+                            command = "CLRBR R0, 12";
                             break;
                         case "2":
-                            command = "CLRBR R0, 1";
+                            command = "CLRBR R0, 13";
                             break;
                         case "1":
-                            command = "CLRBR R0, 2";
+                            command = "CLRBR R0, 14";
                             break;
                         case "0":
-                            command = "CLRBR R0, 3";
+                            command = "CLRBR R0, 15";
                             break;
                     } break; 
                 case "1":
-                    switch (x){
-                        case "3":
-                            command = "CLRBR R0, 4";
-                            break;
-                        case "2":
-                            command = "CLRBR R0, 5";
-                            break;
-                        case "1":
-                            command = "CLRBR R0, 6";
-                            break;
-                        case "0":
-                            command = "CLRBR R0, 7";
-                            break;
-                    } break;
-                case "2":
                     switch (x){
                         case "3":
                             command = "CLRBR R0, 8";
@@ -106,19 +91,34 @@ public final class LED {
                             command = "CLRBR R0, 11";
                             break;
                     } break;
+                case "2":
+                    switch (x){
+                        case "3":
+                            command = "CLRBR R0, 4";
+                            break;
+                        case "2":
+                            command = "CLRBR R0, 5";
+                            break;
+                        case "1":
+                            command = "CLRBR R0, 6";
+                            break;
+                        case "0":
+                            command = "CLRBR R0, 7";
+                            break;
+                    } break;
                 case "3":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 12";
+                            command = "CLRBR R0, 0";
                             break;
                         case "2":
-                            command = "CLRBR R0, 13";
+                            command = "CLRBR R0, 1";
                             break;
                         case "1":
-                            command = "CLRBR R0, 14";
+                            command = "CLRBR R0, 2";
                             break;
                         case "0":
-                            command = "CLRBR R0, 15";
+                            command = "CLRBR R0, 3";
                             break;
                     } break;
             } // If intensity between 5 and 9, turn LED on
@@ -128,34 +128,19 @@ public final class LED {
                 case "0":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 0";
+                            command = "SETBR R0, 12";
                             break;
                         case "2":
-                            command = "SETBR R0, 1";
+                            command = "SETBR R0, 13";
                             break;
                         case "1":
-                            command = "SETBR R0, 2";
+                            command = "SETBR R0, 14";
                             break;
                         case "0":
-                            command = "SETBR R0, 3";
+                            command = "SETBR R0, 15";
                             break;
                     } break; 
                 case "1":
-                    switch (x){
-                        case "3":
-                            command = "SETBR R0, 4";
-                            break;
-                        case "2":
-                            command = "SETBR R0, 5";
-                            break;
-                        case "1":
-                            command = "SETBR R0, 6";
-                            break;
-                        case "0":
-                            command = "SETBR R0, 7";
-                            break;
-                    } break;
-                case "2":
                     switch (x){
                         case "3":
                             command = "SETBR R0, 8";
@@ -170,19 +155,34 @@ public final class LED {
                             command = "SETBR R0, 11";
                             break;
                     } break;
+                case "2":
+                    switch (x){
+                        case "3":
+                            command = "SETBR R0, 4";
+                            break;
+                        case "2":
+                            command = "SETBR R0, 5";
+                            break;
+                        case "1":
+                            command = "SETBR R0, 6";
+                            break;
+                        case "0":
+                            command = "SETBR R0, 7";
+                            break;
+                    } break;
                 case "3":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 12";
+                            command = "SETBR R0, 0";
                             break;
                         case "2":
-                            command = "SETBR R0, 13";
+                            command = "SETBR R0, 1";
                             break;
                         case "1":
-                            command = "SETBR R0, 14";
+                            command = "SETBR R0, 2";
                             break;
                         case "0":
-                            command = "SETBR R0, 15";
+                            command = "SETBR R0, 3";
                             break;
                     } break;
             }   
