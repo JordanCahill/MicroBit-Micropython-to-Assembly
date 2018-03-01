@@ -23,8 +23,8 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
     private static boolean buttonDetected;
     private static boolean buttonA; 
     private static boolean buttonB;
-    private static boolean ISRA;
-    private static boolean ISRB;
+    private static boolean ISRA; // Flag to add ISR code to ISR0
+    private static boolean ISRB; // Flag to add ISR code to ISR1
     private static ArrayList<String> displayImage = new ArrayList<>();
     
     /**
@@ -261,29 +261,26 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
                 
         
         // Button functions
-        if((line.contains("button")) && (line.contains("is_pressed"))){
-            if(line.contains("button_a")){
+        if(line.contains("onButtonPressed")){
+            if(line.contains("Button.A")){
                 buttonA = true; buttonB = false;
                 ISRA = true;
-            }else if(line.contains("button_b")){
+            }else if(line.contains("Button.B")){
                 buttonB = true; buttonA = false;
                 ISRB = true;
             }
             buttonDetected = true;
             if(ISRA ^ ISRB){formatted = "CALL enableInterrupts";}
             line = "\t"; // So the line is not added to loop array
-        } // Count number of lines following the function call
-        line = line.replace("\t", "foobar");
+        }
+        
         if(buttonDetected==true){
-            if(line.contains("foobar")){
-                if(!line.equals("foobar")){
-                    line = line.replace("foobar", "");
-                    if (buttonA == true){;
-                        ISR0.add(line);
-                    }
-                    if(buttonB == true){
-                        ISR1.add(line);
-                    }
+            if(!line.contains("}")){
+                if (buttonA == true){
+                    ISR0.add(line);
+                }
+                if(buttonB == true){
+                    ISR1.add(line);
                 }
             }else{ // Reset loop variables
                 buttonDetected = false; // Finished button loop
