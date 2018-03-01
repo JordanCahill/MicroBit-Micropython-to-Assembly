@@ -13,9 +13,11 @@ class Sleep {
     
     private String[] outputVals = new String[2];
     private String inputLine;
+    private final boolean py;
 
-    Sleep(String line) {
+    Sleep(String line, boolean py) {
         this.inputLine = line;
+        this.py = py;
         
         outputVals = sleep(inputLine);
         }
@@ -26,6 +28,7 @@ class Sleep {
 
     private String[] sleep(String line) {
         
+        
         // Delimit the input string
         Formatter delim = new Formatter(line);
         String[] dlmtd = delim.delimit();
@@ -34,15 +37,21 @@ class Sleep {
         double powerOfMinus9 = pow(10,-9);
         
         String timeStr = dlmtd[0]; // Sleep value in seconds
+        double time = Double.valueOf(timeStr);
+
+        if(!py){ // JavaScript pause() uses ms as a parameter
+            time = time / 1000.0;
+        }
         
         // Calculate number of cycles required based on a 25 MHz clk cycle
-        int cycles = (int) ((Double.valueOf(timeStr))/(80*(powerOfMinus9)));
+        int cycles = (int) (time/(80*(powerOfMinus9)));
+        System.out.println(cycles);
         
         // Default string
         String command = "; Unknown problem converting sleep() function";
 
         // Convert the number of cycles to a binary number
-        String binVal = Integer.toBinaryString(Integer.valueOf(cycles));
+        String binVal = Integer.toBinaryString(cycles);
 
 
         // Original Strings will be the wrong way round so must be flipped later

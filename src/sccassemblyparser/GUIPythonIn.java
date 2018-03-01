@@ -259,7 +259,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
      
         // Sleep functionality
         if(line.contains("sleep") && buttonDetected == false){
-            Sleep sleep = new Sleep(line);
+            Sleep sleep = new Sleep(line,true);
             String[] TmrVals = sleep.getOutputVals();
             formatted = "CALL settingUpTimer";
             Timer setupNoReload = new Timer();

@@ -241,8 +241,8 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         String formatted = "";
      
         // Sleep functionality
-        if(line.contains("sleep") && buttonDetected == false){
-            Sleep sleep = new Sleep(line);
+        if(line.contains("pause") && buttonDetected == false){
+            Sleep sleep = new Sleep(line,false);
             String[] TmrVals = sleep.getOutputVals();
             formatted = "CALL settingUpTimer";
             Timer setupNoReload = new Timer();

@@ -77,7 +77,7 @@ public class GUIMainMenu extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Lucida Sans", 0, 11)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 51));
-        jLabel2.setText("Please select the language you with to translate:");
+        jLabel2.setText("Please select the language you wish to translate:");
 
         jButton3.setText("Download Manual");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
