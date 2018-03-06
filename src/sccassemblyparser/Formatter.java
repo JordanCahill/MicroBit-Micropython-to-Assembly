@@ -96,7 +96,10 @@ class Formatter {
      * @throws FileNotFoundException 
      */
     void CreateAsmFile(JFrame aThis, String[] outputText) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("output.asm");
+        
+        String directory = getOutputDirectory() + "\\Output.asm";
+        
+        PrintWriter out = new PrintWriter(directory);
         for (String s: outputText){
             out.println(s);
         }
@@ -109,7 +112,7 @@ class Formatter {
         System.out.println("\n____________________________________________\n");
         System.out.println("Assembly File generated successfully.");
         
-        String directory = getOutputDirectory() + "\\Output.asm";
+        
         
         JOptionPane.showConfirmDialog(null,
                 "Assembly file generated to " + directory,
