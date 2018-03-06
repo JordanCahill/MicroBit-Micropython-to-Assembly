@@ -181,8 +181,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
         System.out.println("Reading python file and converting..");
         //String[] ISR = new String[30];
         
-        boolean buttonDetected = false; // Boolean to keep track of button presses
-        
+                
         try {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
@@ -204,6 +203,41 @@ public class GUIPythonIn extends javax.swing.JFrame {
         }catch (IOException ex) {}
              
         // Add setUpTimer functionality
+        
+        
+        
+        buttonDetected = false; // Temporary disable buttonDetected
+        // Add button functionality
+        if (ISRA == true){
+            assemText[L] = ";"; L++;
+            assemText[L] = "ISR0:   ORG 92"; L++;
+            for (String s: ISR0){
+                String f = Format(s);
+                assemText[L] = f;
+                if (assemText[L].contains("Displaying image for line")){
+                    for (String t: displayImage){
+                        assemText[L] = t; L++;
+                    }
+                } L++;
+            }
+            assemText[L] = "RETI"; L++;
+        }
+        if (ISRB == true){
+            assemText[L] = ";"; L++;
+            assemText[L] = "ISR1:   ORG 104"; L++;
+            for (String s: ISR1){
+                String f = Format(s);
+                assemText[L] = f;
+                if (assemText[L].contains("Displaying image for line")){
+                    for (String t: displayImage){
+                        assemText[L] = t; L++;
+                    }
+                } L++;
+            }
+            assemText[L] = "RETI"; L++;
+        }
+        buttonDetected = true; // Re-enable buttonDetected
+        
         assemText[L] = ";"; L++;
         for (String s: ISRTimer){
             assemText[L] = s;
@@ -216,32 +250,6 @@ public class GUIPythonIn extends javax.swing.JFrame {
         assemText[L] = "SETBSFR SFR0, 1"; L++;
         assemText[L] = "SETBSFR SFR0, 2"; L++;
         assemText[L] = "RET"; L++;
-        
-        // Add button functionality
-        if (ISRA == true){
-            assemText[L] = ";"; L++;
-            assemText[L] = "ISR0:   ORG 92"; L++;
-            for (String s: ISR0){
-                String f = Format(s);
-                if(s != null){
-                    assemText[L] = f;
-                    L++;
-                }
-            }
-            assemText[L] = "RETI"; L++;
-        }
-        if (ISRB == true){
-            assemText[L] = ";"; L++;
-            assemText[L] = "ISR1:   ORG 104"; L++;
-            for (String s: ISR1){
-                String f = Format(s);
-                if(s != null){
-                    assemText[L] = f;
-                    L++;
-                }
-            }
-            assemText[L] = "RETI"; L++;
-        }
       
         Formatter formatOut = new Formatter();
         String[] outputText = formatOut.formatOutputText(assemText,L);
@@ -266,11 +274,11 @@ public class GUIPythonIn extends javax.swing.JFrame {
             ISRTimer = setupNoReload.setUpTimerNoReload(TmrVals);
         }
         // Display functions
-        if(line.contains("display.set_pixel") && buttonDetected == false){
+        if(line.contains("display") && (buttonDetected == false)){
             LED led = new LED(line);
             formatted = led.getOutputLine();
         }
-        if(line.contains("display.show")){
+        if(line.contains("display.show") && (buttonDetected == false)){
             LED led = new LED(line);
             displayImage = led.displayImage();
             formatted = "; Displaying image for line: " + line;
@@ -290,12 +298,14 @@ public class GUIPythonIn extends javax.swing.JFrame {
             if(ISRA ^ ISRB){formatted = "CALL enableInterrupts";}
             line = "\t"; // So the line is not added to loop array
         } // Count number of lines following the function call
-        line = line.replace("\t", "foobar");
+        line = line.replace("\t", "foobar"); // Detect tab 
+        line = line.replace("    ", "foobar"); // Detect four spaces
         if(buttonDetected==true){
             if(line.contains("foobar")){
                 if(!line.equals("foobar")){
                     line = line.replace("foobar", "");
-                    if (buttonA == true){;
+                    
+                    if (buttonA == true){
                         ISR0.add(line);
                     }
                     if(buttonB == true){

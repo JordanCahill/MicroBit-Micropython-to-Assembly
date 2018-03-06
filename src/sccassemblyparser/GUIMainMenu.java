@@ -136,7 +136,7 @@ public class GUIMainMenu extends javax.swing.JFrame {
         
         // TODO After manual is written, host it and add url below
         /*
-        try { 
+        try{ 
             String url = "https://www.google.com";
             java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
         }catch (java.io.IOException e) {
