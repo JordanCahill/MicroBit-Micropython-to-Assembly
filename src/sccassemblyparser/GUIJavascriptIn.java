@@ -164,9 +164,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         String line;
         System.out.println("Reading python file and converting..");
         //String[] ISR = new String[30];
-        
-        boolean buttonDetected = false; // Boolean to keep track of button presses
-        
+                
         try {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
@@ -182,20 +180,8 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         try {in.close(); // Close the buffer
         }catch (IOException ex) {}
              
-        // Add setUpTimer functionality
-        assemText[L] = ";"; L++;
-        for (String s: ISRTimer){
-            assemText[L] = s;
-            L++;
-        }
-        // Enable Interrupts
-        assemText[L] = ";"; L++;
-        assemText[L] = "enableInterrupts:"; L++;
-        assemText[L] = "SETBSFR SFR0, 0"; L++;
-        assemText[L] = "SETBSFR SFR0, 1"; L++;
-        assemText[L] = "SETBSFR SFR0, 2"; L++;
-        assemText[L] = "RET"; L++;
         
+        buttonDetected = false; // Temporary disable
         // Add button functionality
         if (ISRA == true){
             assemText[L] = ";"; L++;
@@ -221,7 +207,22 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             }
             assemText[L] = "RETI"; L++;
         }
+        buttonDetected = true; // Re-enable
       
+        // Add setUpTimer functionality
+        assemText[L] = ";"; L++;
+        for (String s: ISRTimer){
+            assemText[L] = s;
+            L++;
+        }
+        // Enable Interrupts
+        assemText[L] = ";"; L++;
+        assemText[L] = "enableInterrupts:"; L++;
+        assemText[L] = "SETBSFR SFR0, 0"; L++;
+        assemText[L] = "SETBSFR SFR0, 1"; L++;
+        assemText[L] = "SETBSFR SFR0, 2"; L++;
+        assemText[L] = "RET"; L++;
+        
         Formatter formatOut = new Formatter();
         String[] outputText = formatOut.formatOutputText(assemText,L);
         // Remove empty and null elements from the array
