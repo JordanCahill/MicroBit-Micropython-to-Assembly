@@ -64,61 +64,61 @@ public final class LED {
                 case "0":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 12";
+                            command = "CLRBR R0, 12 ; Turn off LED (3,0)";
                             break;
                         case "2":
-                            command = "CLRBR R0, 13";
+                            command = "CLRBR R0, 13 ; Turn off LED (2,0)";
                             break;
                         case "1":
-                            command = "CLRBR R0, 14";
+                            command = "CLRBR R0, 14 ; Turn off LED (1,0)";
                             break;
                         case "0":
-                            command = "CLRBR R0, 15";
+                            command = "CLRBR R0, 15 ; Turn off LED (0,0)";
                             break;
                     } break; 
                 case "1":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 8";
+                            command = "CLRBR R0, 8 ; Turn off LED (3,1)";
                             break;
                         case "2":
-                            command = "CLRBR R0, 9";
+                            command = "CLRBR R0, 9 ; Turn off LED (2,1)";
                             break;
                         case "1":
-                            command = "CLRBR R0, 10";
+                            command = "CLRBR R0, 10 ; Turn off LED (1,1)";
                             break;
                         case "0":
-                            command = "CLRBR R0, 11";
+                            command = "CLRBR R0, 11 ; Turn off LED (0,1)";
                             break;
                     } break;
                 case "2":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 4";
+                            command = "CLRBR R0, 4 ; Turn off LED (3,2)";
                             break;
                         case "2":
-                            command = "CLRBR R0, 5";
+                            command = "CLRBR R0, 5 ; Turn off LED (2,2)";
                             break;
                         case "1":
-                            command = "CLRBR R0, 6";
+                            command = "CLRBR R0, 6 ; Turn off LED (1,2)";
                             break;
                         case "0":
-                            command = "CLRBR R0, 7";
+                            command = "CLRBR R0, 7 ; Turn off LED (0,2)";
                             break;
                     } break;
                 case "3":
                     switch (x){
                         case "3":
-                            command = "CLRBR R0, 0";
+                            command = "CLRBR R0, 0 ; Turn off LED (3,3)";
                             break;
                         case "2":
-                            command = "CLRBR R0, 1";
+                            command = "CLRBR R0, 1 ; Turn off LED (2,3)";
                             break;
                         case "1":
-                            command = "CLRBR R0, 2";
+                            command = "CLRBR R0, 2 ; Turn off LED (1,3)";
                             break;
                         case "0":
-                            command = "CLRBR R0, 3";
+                            command = "CLRBR R0, 3 ; Turn off LED (0,3)";
                             break;
                     } break;
             } // If intensity between 5 and 9, turn LED on
@@ -128,61 +128,61 @@ public final class LED {
                 case "0":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 12";
+                            command = "SETBR R0, 12 ; Turn on LED (3,0)";
                             break;
                         case "2":
-                            command = "SETBR R0, 13";
+                            command = "SETBR R0, 13 ; Turn on LED (2,0)";
                             break;
                         case "1":
-                            command = "SETBR R0, 14";
+                            command = "SETBR R0, 14 ; Turn on LED (1,0)";
                             break;
                         case "0":
-                            command = "SETBR R0, 15";
+                            command = "SETBR R0, 15 ; Turn on LED (0,0)";
                             break;
                     } break; 
                 case "1":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 8";
+                            command = "SETBR R0, 8 ; Turn on LED (3,1)";
                             break;
                         case "2":
-                            command = "SETBR R0, 9";
+                            command = "SETBR R0, 9 ; Turn on LED (2,1)";
                             break;
                         case "1":
-                            command = "SETBR R0, 10";
+                            command = "SETBR R0, 10 ; Turn on LED (1,1)";
                             break;
                         case "0":
-                            command = "SETBR R0, 11";
+                            command = "SETBR R0, 11 ; Turn on LED (0,1)";
                             break;
                     } break;
                 case "2":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 4";
+                            command = "SETBR R0, 4 ; Turn on LED (3,2)";
                             break;
                         case "2":
-                            command = "SETBR R0, 5";
+                            command = "SETBR R0, 5 ; Turn on LED (2,2)";
                             break;
                         case "1":
-                            command = "SETBR R0, 6";
+                            command = "SETBR R0, 6 ; Turn on LED (1,2)";
                             break;
                         case "0":
-                            command = "SETBR R0, 7";
+                            command = "SETBR R0, 7 ; Turn on LED (0,2)";
                             break;
                     } break;
                 case "3":
                     switch (x){
                         case "3":
-                            command = "SETBR R0, 0";
+                            command = "SETBR R0, 0 ; Turn on LED (3,3)";
                             break;
                         case "2":
-                            command = "SETBR R0, 1";
+                            command = "SETBR R0, 1 ; Turn on LED (2,3)";
                             break;
                         case "1":
-                            command = "SETBR R0, 2";
+                            command = "SETBR R0, 2 ; Turn on LED (1,3)";
                             break;
                         case "0":
-                            command = "SETBR R0, 3";
+                            command = "SETBR R0, 3 ; Turn on LED (0,3)";
                             break;
                     } break;
             }   
@@ -222,7 +222,7 @@ public final class LED {
 
     // Clears the LED display by "XORing" the register with itself
     private void clearPixels(String inputLine) {
-        outputLine = "XOR R2, R2, R2 ; Clear R2";
+        outputLine = "XOR R0, R0, R0 ; Clear LED display";
     }
 
 }
