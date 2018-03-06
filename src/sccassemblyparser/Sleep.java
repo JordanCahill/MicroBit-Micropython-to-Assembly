@@ -12,7 +12,7 @@ import static java.lang.Math.pow;
 class Sleep {
     
     private String[] outputVals = new String[2];
-    private String inputLine;
+    private final String inputLine;
     private final boolean py;
 
     Sleep(String line, boolean py) {
@@ -45,7 +45,6 @@ class Sleep {
         
         // Calculate number of cycles required based on a 25 MHz clk cycle
         int cycles = (int) (time/(80*(powerOfMinus9)));
-        System.out.println(cycles);
         
         // Default string
         String command = "; Unknown problem converting sleep() function";
