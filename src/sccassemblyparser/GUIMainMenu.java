@@ -134,22 +134,12 @@ public class GUIMainMenu extends javax.swing.JFrame {
 
     // On press, downloads the instruction manual
     private void ManualButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ManualButtonActionPerformed
-        
-        // TODO After manual is written, host it and add url below
-        /*
         try{ 
-            String url = "https://www.google.com";
+            String url = "https://drive.google.com/open?id=1VnvkV3CAvg43qFopsSl2qtnC5thLJvIK";
             java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
         }catch (java.io.IOException e) {
             System.out.println(e.getMessage());
-        }*/
-         
-        JOptionPane.showConfirmDialog(null,
-                "Not supported yet - This button will eventually take the user to an online page containing the manual",
-                "Oops",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-    
+        }
     }//GEN-LAST:event_ManualButtonActionPerformed
 
     /**
