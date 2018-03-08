@@ -4,7 +4,10 @@ package sccassemblyparser;
 import static java.lang.Math.pow;
 
 /**
- * Assumes clk frequency of 25 MHz
+ * Contains method to support the Pause() JavaScript method and the Sleep() Python method
+ * Sets up the Timer ISR too run for a user-defined length of time based on the method parameters
+ * outputVals[0] = TMRH, outputVals[1] = TMRL
+ * Assumes the SCC uses a clk frequency of 25 MHz
  * 
  * @author Jordan Cahill
  * @date 08-Feb-2018
@@ -13,8 +16,9 @@ class Sleep {
     
     private String[] outputVals = new String[2];
     private final String inputLine;
-    private final boolean py;
+    private final boolean py; // If true, user is parsing Python, else JavaScript
 
+    // Constructor
     Sleep(String line, boolean py) {
         this.inputLine = line;
         this.py = py;
@@ -22,22 +26,29 @@ class Sleep {
         outputVals = sleep(inputLine);
         }
 
+    // Returns the output assembly commands
     String[] getOutputVals() {
         return outputVals;
     }
 
+    /**
+     * Creates an array of assembly commands to set up the timer ISR by adding appropriate
+     * values to TMRH and TMRL, and enabling the relevant interrupts
+     * 
+     * @param line The command to parse
+     * @return Assembly commands, index 0 = TMRH, index 1 = TMRL
+     */
     private String[] sleep(String line) {
-        
-        
-        // Delimit the input string
+   
+        // Delimit the input string to its parameters
         Formatter delim = new Formatter(line);
         String[] dlmtd = delim.delimit();
         
-        // No "^" operator in Java
+        // Java implementation of "10^-9"
         double powerOfMinus9 = pow(10,-9);
         
-        String timeStr = dlmtd[0]; // Sleep value in seconds
-        double time = Double.valueOf(timeStr);
+        String timeStr = dlmtd[0]; // Length of time to sleep for in seconds
+        double time = Double.valueOf(timeStr); // Parse as a double
 
         if(!py){ // JavaScript pause() uses ms as a parameter
             time = time / 1000.0;
@@ -46,12 +57,10 @@ class Sleep {
         // Calculate number of cycles required based on a 25 MHz clk cycle
         int cycles = (int) (time/(80*(powerOfMinus9)));
         
-        // Default string
-        String command = "; Unknown problem converting sleep() function";
+        String command = "; Unknown problem converting sleep() function"; // Default string
 
         // Convert the number of cycles to a binary number
         String binVal = Integer.toBinaryString(cycles);
-
 
         // Original Strings will be the wrong way round so must be flipped later
         String TMRLFlipped = "";
@@ -67,6 +76,7 @@ class Sleep {
             }
         }
         
+        // Strings to store values after flipping
         String TMRL = "";
         String TMRH = "";
         
@@ -83,5 +93,4 @@ class Sleep {
         
         return outputVals;
     }
-
 }

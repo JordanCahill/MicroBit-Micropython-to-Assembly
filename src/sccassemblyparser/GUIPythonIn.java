@@ -18,8 +18,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class GUIPythonIn extends javax.swing.JFrame {
 
-    private String directory;
-    private static ArrayList<String> ISRTimer = new ArrayList<>();
+    /* Global variabales are necessary due to the dynamic nature of the program's input */
+    private static ArrayList<String> ISRTimerSetUp = new ArrayList<>();
     private static ArrayList<String> ISR0 = new ArrayList<>();
     private static ArrayList<String> ISR1 = new ArrayList<>();
     private static boolean buttonDetected;
@@ -27,6 +27,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
     private static boolean buttonB;
     private static boolean ISRA;
     private static boolean ISRB;
+    private static boolean interruptsNeeded;
     private static ArrayList<String> displayImage = new ArrayList<>();
     
     /**
@@ -154,6 +155,12 @@ public class GUIPythonIn extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * On button press, this method allows the user to search for a file with the file extension ".py" and
+     * saves the directory of the file as a String, the String is then saved to the text field to be retrieved
+     * later
+     * @param evt Button press
+     */
     private void GetDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetDirectoryButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Python Files (*.py)", "py");
@@ -161,12 +168,22 @@ public class GUIPythonIn extends javax.swing.JFrame {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            this.directory = fileChooser.getSelectedFile().toString();
+            String directory = fileChooser.getSelectedFile().toString();
             jTextField1.setText(directory);      
         }
     }//GEN-LAST:event_GetDirectoryButtonActionPerformed
 
+    /**
+     * On press, takes the directory found in the text field and saves it as a new String.
+     * Reads in the file associated with the string line by line and calls the Format() method on it
+     * Contains additional functionality to accommodate interrupts for the final output
+     * Also calls a method to format the master output array "AssemText" and another method to write 
+     * the array as a ".asm" file
+     * @param evt Button press
+     */
     private void SubmitDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitDirectoryButtonActionPerformed
+        // Read in the file based on the directory in the text field
+        String directory = jTextField1.getText();
         FileReader in = null;
         try {
             in = new FileReader(directory);
@@ -176,152 +193,157 @@ public class GUIPythonIn extends javax.swing.JFrame {
      
         String[] assemText = new String[100]; // Text to be formatted and added to .asm file
         assemText[0] = "; File created using a python to assembly converter";
-        int L=1; // Counter for the length of the assembly
+        int L=1; // Counter for the index of the output commands
         String line;
         System.out.println("Reading python file and converting..");
-        //String[] ISR = new String[30];
-        
-                
+ 
         try {
             while ((line = br.readLine()) != null) { // Loop through the text file
-                assemText[L] = Format(line);
                 
+                assemText[L] = Format(line); // Format each line one by one, returns output assembly command
+                
+                // Support for display.show() (Python)
                 if (assemText[L].contains("Displaying image for line")){
                     for (String s: displayImage){
-                        assemText[L] = s;
-                        L++;
+                        assemText[L] = s; L++; // Add to master array and increment index
                     }
                 }
-                
-                L++; // Increment size counter
-                    
+                L++; // Increment index
             }
         } catch (IOException ex) {}
         
         assemText[L] = "END"; L++; // All programs must finish with "END"
-        try {in.close(); // Close the buffer
-        }catch (IOException ex) {}
+        try {in.close();} catch (IOException ex) {} // Close the buffer
              
-        // Add setUpTimer functionality
-        
-        
-        
-        buttonDetected = false; // Temporary disable buttonDetected
-        // Add button functionality
-        if (ISRA == true){
+        buttonDetected = false; // Temporary disable to allow formatting
+        /* If button A or button B was pressed, flags ISRA or ISRB will be asserted and
+           the ISR0 or ISR1 arrays will contain commands to be added to the respective
+           interrupt service routines
+        */
+        if (ISRA == true){ // Button A detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR0:   ORG 92"; L++;
             for (String s: ISR0){
-                String f = Format(s);
-                assemText[L] = f;
-                if (assemText[L].contains("Displaying image for line")){
+                String f = Format(s); // Format each line
+                assemText[L] = f; // Add formatted line to master array
+                if (assemText[L].contains("Displaying image for line")){ // Support for display.show()
                     for (String t: displayImage){
-                        assemText[L] = t; L++;
+                        assemText[L] = t; L++; // Add to master array and increment index
                     }
-                } L++;
+                } L++; // Increment index
             }
-            assemText[L] = "RETI"; L++;
+            assemText[L] = "RETI"; L++; // ISR must end with "RETI", increment index
         }
-        if (ISRB == true){
+        if (ISRB == true){ // Button B detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR1:   ORG 104"; L++;
             for (String s: ISR1){
-                String f = Format(s);
-                assemText[L] = f;
-                if (assemText[L].contains("Displaying image for line")){
-                    for (String t: displayImage){
-                        assemText[L] = t; L++;
+                String f = Format(s); // FOrmat each line
+                assemText[L] = f; // Add formatted line to master array
+                if (assemText[L].contains("Displaying image for line")){ // Support for display.show()
+                    for (String t: displayImage){ 
+                        assemText[L] = t; L++; // Add to master array and increment index
                     }
-                } L++;
+                } L++; // Increment index
             }
-            assemText[L] = "RETI"; L++;
+            assemText[L] = "RETI"; L++; // ISR must end with "RETI", increment index
         }
         buttonDetected = true; // Re-enable buttonDetected
         
+        // Sets up the timer for a user-defined length of time
         assemText[L] = ";"; L++;
-        for (String s: ISRTimer){
-            assemText[L] = s;
-            L++;
+        for (String s: ISRTimerSetUp){
+            assemText[L] = s; L++;
         }
-        // Enable Interrupts
-        assemText[L] = ";"; L++;
-        assemText[L] = "enableInterrupts:"; L++;
-        assemText[L] = "SETBSFR SFR0, 0"; L++;
-        assemText[L] = "SETBSFR SFR0, 1"; L++;
-        assemText[L] = "SETBSFR SFR0, 2"; L++;
-        assemText[L] = "RET"; L++;
-      
+        // Add enableInterrupts() to asm if flag set to true
+        if (interruptsNeeded){
+            assemText[L] = ";"; L++;
+            assemText[L] = "enableInterrupts:"; L++;
+            assemText[L] = "SETBSFR SFR0, 0"; L++;
+            assemText[L] = "SETBSFR SFR0, 1"; L++;
+            assemText[L] = "SETBSFR SFR0, 2"; L++;
+            assemText[L] = "RET"; L++;
+        }
+     
+        // Format the master output array by removing "nulls" and blank lines 
         Formatter formatOut = new Formatter();
         String[] outputText = formatOut.formatOutputText(assemText,L);
-        // Remove empty and null elements from the array
-        //String[] outputText = formatOutputText(assemText, L);
-        
-        try {
-            formatOut.CreateAsmFile(this, outputText); // Output final text to a .asm file
+              
+        try { // Write the final text to an .asm file
+            formatOut.CreateAsmFile(this, outputText); 
         } catch (FileNotFoundException ex) {}
     }//GEN-LAST:event_SubmitDirectoryButtonActionPerformed
     
 
+    /**
+     * Parses a Python command to an appropriate assembly command(s)
+     * 
+     * @param Python command
+     * @return Assembly command
+     */
     private static String Format(String line) {
-        String formatted = "";
+        
+        String formatted = ""; // Assembly command to be returned
      
-        // Sleep functionality
+        // Sleep command functionality
         if(line.contains("sleep") && buttonDetected == false){
-            Sleep sleep = new Sleep(line,true);
-            String[] TmrVals = sleep.getOutputVals();
-            formatted = "CALL settingUpTimer";
-            Timer setupNoReload = new Timer();
-            ISRTimer = setupNoReload.setUpTimerNoReload(TmrVals);
+            Sleep sleep = new Sleep(line,true); // Sleep object to invoke methods
+            String[] TmrVals = sleep.getOutputVals(); // Get values to pass into TMRL and TMRH registers
+            formatted = "CALL settingUpTimer"; // Call assembly method to set up timer
+            Timer setupNoReload = new Timer(); // Timer object to invoke set up method
+            ISRTimerSetUp = setupNoReload.setUpTimerNoReload(TmrVals); // Add assembly commands to array
         }
-        // Display functions
+        // Support for LED functionality
         if(line.contains("display") && (buttonDetected == false)){
-            LED led = new LED(line);
-            formatted = led.getOutputLine();
+            LED led = new LED(line); // LED object to invoke methods
+            formatted = led.getOutputLine(); 
         }
+        // Additional LED support to display pre-programmed images (Hardcoded in LED class)
         if(line.contains("display.show") && (buttonDetected == false)){
-            LED led = new LED(line);
+            LED led = new LED(line); // LED object to invoke displayImage()
             displayImage = led.displayImage();
             formatted = "; Displaying image for line: " + line;
         }
-                
-        
-        // Button functions
+        // Convert loops after "onButtonPressed" calls
+        // This if loop determines which button (A or B) press loop the current line falls under, if any
         if((line.contains("button")) && (line.contains("is_pressed"))){
-            if(line.contains("button_a")){
+            if(line.contains("button_a")){ // Button A detected
                 buttonA = true; buttonB = false;
                 ISRA = true;
-            }else if(line.contains("button_b")){
+            }else if(line.contains("button_b")){ // Button B detected
                 buttonB = true; buttonA = false;
                 ISRB = true;
             }
             buttonDetected = true;
-            if(ISRA ^ ISRB){formatted = "CALL enableInterrupts";}
+            if(ISRA ^ ISRB){ // Enable interrupts if A or B detected
+                formatted = "CALL enableInterrupts";
+                interruptsNeeded = true;
+            }
             line = "\t"; // So the line is not added to loop array
-        } // Count number of lines following the function call
+        }
+        // Need to detect Python indent (Indicates a loop) and replace with a random string ("foobar")
         line = line.replace("\t", "foobar"); // Detect tab 
         line = line.replace("    ", "foobar"); // Detect four spaces
         if(buttonDetected==true){
-            if(line.contains("foobar")){
-                if(!line.equals("foobar")){
-                    line = line.replace("foobar", "");
-                    
-                    if (buttonA == true){
+            if(line.contains("foobar")){ // Current line falls in a loop
+                if(!line.equals("foobar")){ // Ensures "blank" lines aren't manipulated
+                    line = line.replace("foobar", ""); // Get rid of the random string
+                    if (buttonA == true){ // Current line falls under a button A function
                         ISR0.add(line);
                     }
-                    if(buttonB == true){
+                    if(buttonB == true){ // Current line falls under a button B function
                         ISR1.add(line);
                     }
                 }
-            }else{ // Reset loop variables
+            }else{
                 buttonDetected = false; // Finished button loop
             }
-
-            // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
         }
-
         return formatted;
     }
     /**
+     * Auto-generated, not used
+     * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {

@@ -11,16 +11,14 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author Jorda
  */
 public class GUIMainMenu extends javax.swing.JFrame {
-    
-    
-
     /**
      * Creates new form GUIMainMenu
+     * Displays a button for the user to choose whether to convert JavaScript or Python code
+     * Allows gives the user an option to download an instruction manual for the program
+     *
+     * @throws java.io.FileNotFoundException
      */
     public GUIMainMenu() throws FileNotFoundException, IOException {
-        
-        
-        
         initComponents();
     }
 
@@ -122,16 +120,19 @@ public class GUIMainMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // On press, opens the Python interface
     private void PythonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PythonButtonActionPerformed
         this.setVisible(false);
         GUIPythonIn pyin = new GUIPythonIn();
     }//GEN-LAST:event_PythonButtonActionPerformed
 
+    // On press, opens the JavaScript interface
     private void JavascriptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JavascriptButtonActionPerformed
         this.setVisible(false);
         GUIJavascriptIn jsin = new GUIJavascriptIn();
     }//GEN-LAST:event_JavascriptButtonActionPerformed
 
+    // On press, downloads the instruction manual
     private void ManualButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ManualButtonActionPerformed
         
         // TODO After manual is written, host it and add url below

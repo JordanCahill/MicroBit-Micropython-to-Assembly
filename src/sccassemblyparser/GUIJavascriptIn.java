@@ -12,20 +12,20 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author Jorda
+ * @author Jordan
  */
 public class GUIJavascriptIn extends javax.swing.JFrame {
 
-    private String directory;
-    private static ArrayList<String> ISRTimer = new ArrayList<>();
+    /* Global variabales are necessary due to the dynamic nature of the program's input */
+    private static ArrayList<String> ISRTimerSetUp = new ArrayList<>();
     private static ArrayList<String> ISR0 = new ArrayList<>();
     private static ArrayList<String> ISR1 = new ArrayList<>();
-    private static boolean buttonDetected;
-    private static boolean buttonA; 
-    private static boolean buttonB;
+    private static boolean interruptsNeeded; // Global flag to add enableInterrupts() to final output
+    private static boolean buttonDetected; // Global flag to detect a single button press
+    private static boolean buttonA; // If current button loop is button A
+    private static boolean buttonB; // If current button loop is button B
     private static boolean ISRA; // Flag to add ISR code to ISR0
     private static boolean ISRB; // Flag to add ISR code to ISR1
-    private static ArrayList<String> displayImage = new ArrayList<>();
     
     /**
      * Creates new form GUIJavaScriptIn
@@ -138,6 +138,12 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * On button press, this method allows the user to search for a file with the file extension ".js" and
+     * saves the directory of the file as a String, the String is then saved to the text field to be retrieved
+     * later
+     * @param evt Button press
+     */
     private void GetDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetDirectoryButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("JavaScript Files (*.js)", "js");
@@ -145,150 +151,158 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            this.directory = fileChooser.getSelectedFile().toString();
+            String directory = fileChooser.getSelectedFile().toString();
             jTextField1.setText(directory);      
         }
     }//GEN-LAST:event_GetDirectoryButtonActionPerformed
 
+    /**
+     * On press, takes the directory found in the text field and saves it as a new String.
+     * Reads in the file associated with the string line by line and calls the Format() method on it
+     * Contains additional functionality to accomodate interrupts for the final output
+     * Also calls a method to format the master output array "AssemText" and another method to write 
+     * the array as a ".asm" file
+     * @param evt Button press
+     */
     private void SubmitDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitDirectoryButtonActionPerformed
+        // Read in the file based on the directory in the text field
+        String directory = jTextField1.getText();
         FileReader in = null;
-        try {
-            in = new FileReader(directory);
-        } catch (FileNotFoundException ex) {}
+        try {in = new FileReader(directory);} catch (FileNotFoundException ex) {}
         BufferedReader br = new BufferedReader(in);
         System.out.println("File found..");
      
+        // TODO: Add dynamic length for the string
         String[] assemText = new String[100]; // Text to be formatted and added to .asm file
         assemText[0] = "; File created using a python to assembly converter";
-        int L=1; // Counter for the length of the assembly
+        int L=1; // Counter for index of the output commands
         String line;
         System.out.println("Reading python file and converting..");
-        //String[] ISR = new String[30];
-                
-        try {
+
+        try { // Read each line and format one by one
             while ((line = br.readLine()) != null) { // Loop through the text file
                 assemText[L] = Format(line);
-                
-                //TODO: Add support for multiple returns (ie. within button press loops)
-                             
-                L++; // Increment size counter
-                    
+                L++; // Increment size counter                    
             }
         } catch (IOException ex) {}
         
         assemText[L] = "END"; L++; // All programs must finish with "END"
-        try {in.close(); // Close the buffer
-        }catch (IOException ex) {}
-             
+        try {in.close();}catch (IOException ex) {} // Close the buffer             
         
-        buttonDetected = false; // Temporary disable
-        // Add button functionality
-        if (ISRA == true){
+        buttonDetected = false; // Temporarily disable to allow formatting 
+        
+        /* If button A or button B was pressed, flags ISRA or ISRB will be asserted and
+           the ISR0 or ISR1 arrays will contain commands to be added to the respective
+           interrupt service routines
+        */
+        if (ISRA == true){ // Button A detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR0:   ORG 92"; L++;
-            for (String s: ISR0){
+            for (String s: ISR0){ // Format each string in the array
                 String f = Format(s);
                 if(s != null){
-                    assemText[L] = f;
-                    L++;
+                    assemText[L] = f; L++; // Add to master array and increment count
                 }
             }
-            assemText[L] = "RETI"; L++;
+            assemText[L] = "RETI"; L++; // ISR must end with "RETI"
         }
-        if (ISRB == true){
+        if (ISRB == true){ // Button B detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR1:   ORG 104"; L++;
-            for (String s: ISR1){
+            for (String s: ISR1){ // Format each string in the array
                 String f = Format(s);
                 if(s != null){
-                    assemText[L] = f;
-                    L++;
+                    assemText[L] = f; L++; // Add to master array and increment count
                 }
             }
-            assemText[L] = "RETI"; L++;
+            assemText[L] = "RETI"; L++; // ISR must end with "RETI"
         }
         buttonDetected = true; // Re-enable
-      
-        // Add setUpTimer functionality
+        
+        // Sets up the timer for a user-defined length of time
         assemText[L] = ";"; L++;
-        for (String s: ISRTimer){
+        for (String s: ISRTimerSetUp){
             assemText[L] = s;
             L++;
         }
-        // Enable Interrupts
-        assemText[L] = ";"; L++;
-        assemText[L] = "enableInterrupts:"; L++;
-        assemText[L] = "SETBSFR SFR0, 0"; L++;
-        assemText[L] = "SETBSFR SFR0, 1"; L++;
-        assemText[L] = "SETBSFR SFR0, 2"; L++;
-        assemText[L] = "RET"; L++;
+        // Add enableInterrupts() to asm if flag set to true
+        if (interruptsNeeded){
+            assemText[L] = ";"; L++;
+            assemText[L] = "enableInterrupts:"; L++;
+            assemText[L] = "SETBSFR SFR0, 0"; L++;
+            assemText[L] = "SETBSFR SFR0, 1"; L++;
+            assemText[L] = "SETBSFR SFR0, 2"; L++;
+            assemText[L] = "RET"; L++;
+        }
         
+        // Format the master output array by removing "nulls" and blank lines 
         Formatter formatOut = new Formatter();
         String[] outputText = formatOut.formatOutputText(assemText,L);
-        // Remove empty and null elements from the array
-        //String[] outputText = formatOutputText(assemText, L);
-        
-        try {
-            formatOut.CreateAsmFile(this, outputText); // Output final text to a .asm file
+
+        try { // Write the final text to an .asm file
+            formatOut.CreateAsmFile(this, outputText); 
         } catch (FileNotFoundException ex) {}
     }//GEN-LAST:event_SubmitDirectoryButtonActionPerformed
 
+    /**
+     * Parses a JavaScript command to an appropriate assembly command(s)
+     * 
+     * @param JavaScript command
+     * @return Assembly command
+     */
     private static String Format(String line) {
-        String formatted = "";
-     
-        // Sleep functionality
-        if(line.contains("pause") && buttonDetected == false){
-            Sleep sleep = new Sleep(line,false);
-            String[] TmrVals = sleep.getOutputVals();
-            formatted = "CALL settingUpTimer";
-            Timer setupNoReload = new Timer();
-            ISRTimer = setupNoReload.setUpTimerNoReload(TmrVals);
-        }
-        // Display functions
-        if(line.contains("led.plot") && buttonDetected == false){
-            LED led = new LED(line);
-            formatted = led.getOutputLine(); // Get output ASM instruction
-        }
-        if(line.contains("display.show")){
-            LED led = new LED(line);
-            displayImage = led.displayImage();
-            formatted = "; Displaying image for line: " + line;
-        }
-                
         
-        // Button functions
+        String formatted = ""; // Assembly command to be returned
+  
+        // Pause command functionality
+        if(line.contains("pause") && buttonDetected == false){
+            Sleep sleep = new Sleep(line,false); // Sleep object to invoke methods
+            String[] TmrVals = sleep.getOutputVals(); // Get the values to pass into TMRL and TMRH registers
+            formatted = "CALL settingUpTimer"; // Calls the method to set up the timer
+            Timer setupNoReload = new Timer(); // Timer object to invoke methods
+            ISRTimerSetUp = setupNoReload.setUpTimerNoReload(TmrVals);
+        }
+        // Convert LED plot/unplot functions
+        if(line.contains("led.plot") && buttonDetected == false){
+            LED led = new LED(line); // LED object to invoke methods
+            formatted = led.getOutputLine(); // Get output ASM instruction
+        }        
+        // Convert loops after "onButtonPressed" calls
+        // This if loop determines which button (A or B) press loop the current line falls under, if any
         if(line.contains("onButtonPressed")){
-            if(line.contains("Button.A")){
-                buttonA = true; buttonB = false;
+            if(line.contains("Button.A")){ // Button A detected
+                buttonA = true; buttonB = false; // TODO: make a single flag for current button
                 ISRA = true;
-            }else if(line.contains("Button.B")){
+            }else if(line.contains("Button.B")){ // Button B detected
                 buttonB = true; buttonA = false;
                 ISRB = true;
             }
             buttonDetected = true;
-            if(ISRA ^ ISRB){formatted = "CALL enableInterrupts";}
-            line = "\t"; // So the line is not added to loop array
+            if(ISRA ^ ISRB){ // Enable interrupts if A or B detected
+                interruptsNeeded = true;
+                formatted = "CALL enableInterrupts";
+            }
+            line = "\t"; // Ensures the button press line is not added to loop array
         }
-        
+        // If the line falls under a button press, add it to an appopriate array
         if(buttonDetected==true){
             if(!line.contains("}")){
-                if (buttonA == true){
+                if (buttonA == true){ // Current line falls under a button A function
                     ISR0.add(line);
                 }
-                if(buttonB == true){
+                if(buttonB == true){ // Current line falls under a button B function
                     ISR1.add(line);
                 }
             }else{ // Reset loop variables
-                buttonDetected = false; // Finished button loop
+                buttonDetected = false; // Finished current button loop
             }
-
-            // NOTE: WILL NEED TO ADD buttonDetected check to every other loop
         }
-
         return formatted;
     }
     
     /**
+     * Auto-generated, not used
+     * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {

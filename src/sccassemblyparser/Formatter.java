@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
+ * This class contains methods used to manipulate the master array
  *
  * @author Jordan Cahill
  * @date 08-Feb-2018
@@ -15,40 +16,39 @@ import javax.swing.JOptionPane;
 class Formatter {
 
     private String input;
-    
+   
+    // Overloaded contructors
     public Formatter(String line){
         input=line;
     }
-
     public Formatter() { // Blank constructor for method calls
         
     }
 
+    /**
+     * Used to delimit an input command into its parameters
+     * 
+     * @return Array of parameters
+     */
     String[] delimit() {
                 
-        String delim1 = "\\(";
-        String delim2 = ",";
-        String[] tokens = input.split(delim1);
-        String input = tokens[1]; //(x,y,str)
-        
-        String[] variables = input.split(delim2);
-        String[] delimitted = null;
-        delimitted = variables;
-        
-        for(int i=0;i<delimitted.length;i++){
-            delimitted[i] = delimitted[i].replace(")","");
-        }
+        String delim1 = "\\("; // Commands contain parameters within brackets
+        String delim2 = ","; // Parameters will be separated by commas
+        String[] tokens = input.split(delim1); // Separate the parameters from the method
+        String params = tokens[1]; //(x,y,z) => parameters
+        String[] variables = params.split(delim2); // Separate the params from eachother
+        variables[variables.length] = variables[variables.length].replace(")",""); // Remove the closing bracket from the last parameter
        
-        return delimitted;
+        return variables;
     }
 
     
     /**
      * Method used to remove nulls and empties from a String array and resize the array
      * 
-     * @param outputList the list to be resized with nulls and empties removed
+     * @param The String array to be formatted
      * @param L the size of the allocated space
-     * @return the formatted String array
+     * @return The formatted String array
      */
     String[] formatOutputText(String[] outputList, int L) {
         
@@ -56,10 +56,10 @@ class Formatter {
         int j = 0;
         
         // Remove blank spaces
-        for(int i = 0; i<outputList.length; i++) {
-            if(outputList[i]!=null){
-                if(!outputList[i].equals("")){
-                    out[j] = outputList[i];
+        for (String s : outputList) {
+            if (s != null) {
+                if (!s.equals("")) {
+                    out[j] = s;
                     j++;
                 }
             }
@@ -81,29 +81,28 @@ class Formatter {
         }
         // Move to a new resized array
         String[] finalOut = new String[count];
-        for (int i=0;i<count;i++){ // Assign to finalOut
-            finalOut[i] = out[i];
-        }
+        System.arraycopy(out, 0, finalOut, 0, count); // Assign to finalOut
         
-        return finalOut;
+        return finalOut; // Return the formatted array
     }
 
     /**
-     * Method used to output the formatted text to .asm file located in the src folder
+     * Method used to output the formatted text to .asm file in a user-defined directory
      * 
-     * @param aThis pass in the JFrame so it can be closed
-     * @param outputText the String array to output
+     * @param Pass in the JFrame so it can be closed
+     * @param The String array to output
      * @throws FileNotFoundException 
      */
     void CreateAsmFile(JFrame aThis, String[] outputText) throws FileNotFoundException {
         
-        String directory = getOutputDirectory() + "\\Output.asm";
-        
-        PrintWriter out = new PrintWriter(directory);
-        for (String s: outputText){
-            out.println(s);
+        // Opens a dialog to allow the user to choose an output directory
+        String directory = getOutputDirectory() + "\\Output.asm"; 
+        try (PrintWriter out = new PrintWriter(directory)) {
+            for (String s: outputText){
+                out.println(s); // Write the array to the output file
+            }
         }
-        out.close();
+        // Print the final output to the console
         System.out.println("\nFinal text output:");
         System.out.println("____________________________________________\n");
         for (String s: outputText){
@@ -112,8 +111,7 @@ class Formatter {
         System.out.println("\n____________________________________________\n");
         System.out.println("Assembly File generated successfully.");
         
-        
-        
+        // Open a dialog box to confirm success
         JOptionPane.showConfirmDialog(null,
                 "Assembly file generated to " + directory,
                 "Success!",
@@ -125,6 +123,11 @@ class Formatter {
         System.exit(0);
     }
     
+    /**
+     * Opens a dialog box allowing the user to choose an output directory
+     * 
+     * @return The user defined directory 
+     */
     public String getOutputDirectory(){
         JFileChooser chooser = new JFileChooser(); 
         String choosertitle = "Please choose where to save file..";
@@ -140,6 +143,4 @@ class Formatter {
             return null;
         }
     }
-    
-    
 }
