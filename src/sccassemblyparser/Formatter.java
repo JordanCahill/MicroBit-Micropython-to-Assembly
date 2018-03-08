@@ -37,7 +37,7 @@ class Formatter {
         String[] tokens = input.split(delim1); // Separate the parameters from the method
         String params = tokens[1]; //(x,y,z) => parameters
         String[] variables = params.split(delim2); // Separate the params from eachother
-        variables[variables.length] = variables[variables.length].replace(")",""); // Remove the closing bracket from the last parameter
+        variables[variables.length-1] = variables[variables.length-1].replace(")",""); // Remove the closing bracket from the last parameter
        
         return variables;
     }

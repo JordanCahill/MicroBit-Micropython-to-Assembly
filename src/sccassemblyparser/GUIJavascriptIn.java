@@ -159,7 +159,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
     /**
      * On press, takes the directory found in the text field and saves it as a new String.
      * Reads in the file associated with the string line by line and calls the Format() method on it
-     * Contains additional functionality to accomodate interrupts for the final output
+     * Contains additional functionality to accommodate interrupts for the final output
      * Also calls a method to format the master output array "AssemText" and another method to write 
      * the array as a ".asm" file
      * @param evt Button press
@@ -190,7 +190,6 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         try {in.close();}catch (IOException ex) {} // Close the buffer             
         
         buttonDetected = false; // Temporarily disable to allow formatting 
-        
         /* If button A or button B was pressed, flags ISRA or ISRB will be asserted and
            the ISR0 or ISR1 arrays will contain commands to be added to the respective
            interrupt service routines
@@ -222,8 +221,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         // Sets up the timer for a user-defined length of time
         assemText[L] = ";"; L++;
         for (String s: ISRTimerSetUp){
-            assemText[L] = s;
-            L++;
+            assemText[L] = s; L++;
         }
         // Add enableInterrupts() to asm if flag set to true
         if (interruptsNeeded){
@@ -263,7 +261,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             ISRTimerSetUp = setupNoReload.setUpTimerNoReload(TmrVals);
         }
         // Convert LED plot/unplot functions
-        if(line.contains("led.plot") && buttonDetected == false){
+        if(line.contains("plot") && buttonDetected == false){
             LED led = new LED(line); // LED object to invoke methods
             formatted = led.getOutputLine(); // Get output ASM instruction
         }        

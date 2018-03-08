@@ -64,8 +64,10 @@ public final class LED {
             command = "; Coordinates of set_pixel() too high";
         }
         
+        // TODO: Add line to remove spaces in coordinates E.g. (0, 0) -> (0,0)
+        
         // If intensity between 0 and 4, or JavaScript unplot() command, turn LED off
-        if ((line.contains("unplot")||(intensity<5) && (intensity>=0))){
+        if (line.contains("unplot")||((intensity<5) && (intensity>=0))){
             switch (y){ // Switch block with case for each coordinate
                 case "0":
                     switch (x){
@@ -129,7 +131,7 @@ public final class LED {
                     } break;
             } 
         // If intensity between 5 and 9, or JavaScript command plot(), turn LED on    
-        }else if ((line.contains("plot")||((intensity>=5) && (intensity<10)))){
+        }else if ((line.contains(".plot")||((intensity>=5) && (intensity<10)))){
             switch (y){ // Switch block with case for each coordinate
                 case "0":
                     switch (x){
@@ -229,12 +231,12 @@ public final class LED {
     }
 
     // Returns the outputLine stored in the current instantiation
-    String getOutputLine() {
+    public String getOutputLine() {
         return outputLine;
     }
 
     // Clears the LED display by "XORing" the register with itself
-    private void clearPixels(String inputLine) {
+    public void clearPixels(String inputLine) {
         outputLine = "XOR R0, R0, R0 ; Clear LED display";
     }
 
