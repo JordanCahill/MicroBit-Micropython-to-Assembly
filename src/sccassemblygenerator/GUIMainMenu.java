@@ -16,6 +16,7 @@ public class GUIMainMenu extends javax.swing.JFrame {
      * Displays a button for the user to choose whether to convert JavaScript or Python code
      * Allows gives the user an option to download an instruction manual for the program
      *
+     * 
      * @throws java.io.FileNotFoundException
      */
     public GUIMainMenu() throws FileNotFoundException, IOException {
