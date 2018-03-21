@@ -1,4 +1,4 @@
-package sccassemblyparser;
+package sccassemblygenerator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

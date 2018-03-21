@@ -1,5 +1,5 @@
 
-package sccassemblyparser;
+package sccassemblygenerator;
 
 import java.util.ArrayList;
 
