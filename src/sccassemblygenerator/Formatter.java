@@ -35,6 +35,11 @@ class Formatter {
         String delim1 = "\\("; // Commands contain parameters within brackets
         String delim2 = ","; // Parameters will be separated by commas
         String[] tokens = input.split(delim1); // Separate the parameters from the method
+        
+        int count = 0;
+        for (String s: tokens){ // Remove blanks
+           tokens[count] = s.replace(" ",""); count++;
+        }
         String params = tokens[1]; //(x,y,z) => parameters
         String[] variables = params.split(delim2); // Separate the params from eachother
         variables[variables.length-1] = variables[variables.length-1].replace(")",""); // Remove the closing bracket from the last parameter

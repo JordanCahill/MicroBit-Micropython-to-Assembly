@@ -16,16 +16,24 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class GUIJavascriptIn extends javax.swing.JFrame {
 
-    /* Global variabales are necessary due to the dynamic nature of the program's input */
+    /* Large ammount of global variabales are necessary due to the dynamic nature of the program's input */
+    
+    private static boolean dontFormat = false;
+    
+    // 'Button' Global variables
     private static ArrayList<String> ISRTimerSetUp = new ArrayList<>();
     private static ArrayList<String> ISR0 = new ArrayList<>();
     private static ArrayList<String> ISR1 = new ArrayList<>();
     private static boolean interruptsNeeded; // Global flag to add enableInterrupts() to final output
-    private static boolean buttonDetected; // Global flag to detect a single button press
     private static boolean buttonA; // If current button loop is button A
     private static boolean buttonB; // If current button loop is button B
     private static boolean ISRA; // Flag to add ISR code to ISR0
     private static boolean ISRB; // Flag to add ISR code to ISR1
+    
+    // 'Function' Global variables
+    private static String[][] functions = new String[1000][10000];
+    private static int fi = 0; private static int fj = 0; 
+    private static String[] functionNames = new String[1000];
     
     /**
      * Creates new form GUIJavaScriptIn
@@ -172,51 +180,80 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         BufferedReader br = new BufferedReader(in);
         System.out.println("File found..");
      
+        
+        long millis=System.currentTimeMillis();  
+        java.sql.Date date=new java.sql.Date(millis);
+        
         // TODO: Add dynamic length for the string
-        String[] assemText = new String[100]; // Text to be formatted and added to .asm file
-        assemText[0] = "; File created using a python to assembly converter";
-        int L=1; // Counter for index of the output commands
+        String[] assemText = new String[10000]; // Text to be formatted and added to .asm file
+        assemText[0] = "; File created using the SCC Assembly Generator";
+        assemText[1] = "; Original language: JavaScript";
+        assemText[2] = "; Date: " + date;
+        int L=3; // Counter for index of the output commands
         String line;
         System.out.println("Reading python file and converting..");
 
-        try { // Read each line and format one by one
-            while ((line = br.readLine()) != null) { // Loop through the text file
-                assemText[L] = Format(line);
+        try { // Read each line and format individually
+            while ((line = br.readLine()) != null) { // Loop until no text is left
+                assemText[L] = Parse(line); // Return and store assembly command
                 L++; // Increment size counter                    
             }
-        } catch (IOException ex) {}
-        
+        } catch (IOException ex) {/*Exception Handling*/}
         assemText[L] = "END"; L++; // All programs must finish with "END"
-        try {in.close();}catch (IOException ex) {} // Close the buffer             
         
-        buttonDetected = false; // Temporarily disable to allow formatting 
+        
+        try {in.close();} catch (IOException ex) {} // Close the buffer             
+        
+        dontFormat = false; // Temporarily disable to allow formatting 
         /* If button A or button B was pressed, flags ISRA or ISRB will be asserted and
-           the ISR0 or ISR1 arrays will contain commands to be added to the respective
+           the ISR1 or ISR0 arrays will contain commands to be added to the respective
            interrupt service routines
         */
-        if (ISRA == true){ // Button A detected
+        if (ISRB == true){ // Button B detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR0:   ORG 92"; L++;
             for (String s: ISR0){ // Format each string in the array
-                String f = Format(s);
+                String f = Parse(s);
+                if(s.contains("change(LedSpriteProperty.X, 1)")){
+                    assemText[L] = "ROTR R0, 1 ; Shift Sprite right"; L++;
+                }
                 if(s != null){
                     assemText[L] = f; L++; // Add to master array and increment count
                 }
             }
             assemText[L] = "RETI"; L++; // ISR must end with "RETI"
         }
-        if (ISRB == true){ // Button B detected
+        if (ISRA == true){ // Button A detected
             assemText[L] = ";"; L++;
             assemText[L] = "ISR1:   ORG 104"; L++;
             for (String s: ISR1){ // Format each string in the array
-                String f = Format(s);
+                String f = Parse(s);
+                if(s.contains("change(LedSpriteProperty.Y, 1)")){
+                    assemText[L] = "ROTR R0, 4 ; Shift Sprite down"; L++;
+                }
                 if(s != null){
                     assemText[L] = f; L++; // Add to master array and increment count
                 }
             }
             assemText[L] = "RETI"; L++; // ISR must end with "RETI"
         }
-        buttonDetected = true; // Re-enable
+        
+        /*
+        // Add each function by iterating through them and adding line by line
+        assemText[L] = ";"; L++;
+        for(int i=0;i<functions.length;i++){
+            assemText[L] = functionNames[i]; L++;
+            for(int j=0;j<functions[i].length;j++){
+                if(functions[i][j] != null && !functions[i][j].isEmpty()){
+                    System.out.print("before: " + functions[i][j] + ", after: ");
+                    String f = Parse(functions[i][j]);
+                    System.out.println(f);
+                    assemText[L] = f; L++; // Add to master array and increment count                        
+                }
+            }
+        }*/
+        
+        dontFormat = true; // Re-enable
         
         // Sets up the timer for a user-defined length of time
         assemText[L] = ";"; L++;
@@ -227,9 +264,9 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         if (interruptsNeeded){
             assemText[L] = ";"; L++;
             assemText[L] = "enableInterrupts:"; L++;
-            assemText[L] = "SETBSFR SFR0, 0"; L++;
-            assemText[L] = "SETBSFR SFR0, 1"; L++;
-            assemText[L] = "SETBSFR SFR0, 2"; L++;
+            assemText[L] = "SETBSFR SFR0, 0 ; Enable Global Interrupts"; L++;
+            assemText[L] = "SETBSFR SFR0, 1 ; Enable ISR0"; L++;
+            assemText[L] = "SETBSFR SFR0, 2 ; Enable ISR1"; L++;
             assemText[L] = "RET"; L++;
         }
         
@@ -248,12 +285,12 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
      * @param JavaScript command
      * @return Assembly command
      */
-    private static String Format(String line) {
+    private static String Parse(String line) {
         
         String formatted = ""; // Assembly command to be returned
   
         // Pause command functionality
-        if(line.contains("pause") && buttonDetected == false){
+        if(line.contains("pause") && dontFormat == false){
             Sleep sleep = new Sleep(line,false); // Sleep object to invoke methods
             String[] TmrVals = sleep.getOutputVals(); // Get the values to pass into TMRL and TMRH registers
             formatted = "CALL settingUpTimer"; // Calls the method to set up the timer
@@ -261,7 +298,7 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
             ISRTimerSetUp = setupNoReload.setUpTimerNoReload(TmrVals);
         }
         // Convert LED plot/unplot functions
-        if(line.contains("plot") && buttonDetected == false){
+        if((line.contains("plot")||line.contains("clear")||line.contains("createSprite")) && dontFormat == false){
             LED led = new LED(line); // LED object to invoke methods
             formatted = led.getOutputLine(); // Get output ASM instruction
         }        
@@ -269,32 +306,51 @@ public class GUIJavascriptIn extends javax.swing.JFrame {
         // This if loop determines which button (A or B) press loop the current line falls under, if any
         if(line.contains("onButtonPressed")){
             if(line.contains("Button.A")){ // Button A detected
-                buttonA = true; buttonB = false; // TODO: make a single flag for current button
-                ISRA = true;
+                buttonA = true; buttonB = false; // Set current button to A
+                ISRA = true; 
             }else if(line.contains("Button.B")){ // Button B detected
-                buttonB = true; buttonA = false;
+                buttonB = true; buttonA = false; // Set current button to B
                 ISRB = true;
             }
-            buttonDetected = true;
+            dontFormat = true;
             if(ISRA ^ ISRB){ // Enable interrupts if A or B detected
                 interruptsNeeded = true;
-                formatted = "CALL enableInterrupts";
+                formatted = "CALL enableInterrupts ; Button press detected, interrupts required";
             }
             line = "\t"; // Ensures the button press line is not added to loop array
         }
-        // If the line falls under a button press, add it to an appopriate array
-        if(buttonDetected==true){
-            if(!line.contains("}")){
+        // If the line falls under a button press, add it to an appropriate array
+        if(dontFormat==true){
+            if(!line.contains("})")){
                 if (buttonA == true){ // Current line falls under a button A function
-                    ISR0.add(line);
-                }
-                if(buttonB == true){ // Current line falls under a button B function
                     ISR1.add(line);
                 }
+                if(buttonB == true){ // Current line falls under a button B function
+                    ISR0.add(line);
+                }
             }else{ // Reset loop variables
-                buttonDetected = false; // Finished current button loop
+                dontFormat = false; // Finished current button loop
             }
         }
+        /*if(line.contains("function ")){
+            dontFormat = true;
+            String funcName = line.replace("function ", ""); // Remove the "function" string
+            funcName = funcName.replace("{", "");
+            funcName = funcName + ":";
+            functionNames[fi] = funcName;
+            line = "\t";
+        }
+        if(dontFormat == true){
+            if(!line.contains("}") || !line.equals("Stop")){
+                functions[fi][fj] = line;
+                fj++; // Move to next line
+            }else{
+                dontFormat = false;
+                fi++; // Move to next function column
+                fj = 0; // Current index reset
+            }
+        }*/
+        
         return formatted;
     }
     

@@ -191,16 +191,22 @@ public class GUIPythonIn extends javax.swing.JFrame {
         BufferedReader br = new BufferedReader(in);
         System.out.println("File found..");
      
-        String[] assemText = new String[100]; // Text to be formatted and added to .asm file
-        assemText[0] = "; File created using a python to assembly converter";
-        int L=1; // Counter for the index of the output commands
+        long millis=System.currentTimeMillis();  
+        java.sql.Date date=new java.sql.Date(millis);
+        
+        // TODO: Add dynamic length for the string
+        String[] assemText = new String[10000]; // Text to be formatted and added to .asm file
+        assemText[0] = "; File created using the SCC Assembly Generator";
+        assemText[1] = "; Original language: Python";
+        assemText[2] = "; Date: " + date;
+        int L=3; // Counter for index of the output commands
         String line;
         System.out.println("Reading python file and converting..");
  
         try {
             while ((line = br.readLine()) != null) { // Loop through the text file
                 
-                assemText[L] = Format(line); // Format each line one by one, returns output assembly command
+                assemText[L] = Parse(line); // Format each line one by one, returns output assembly command
                 
                 // Support for display.show() (Python)
                 if (assemText[L].contains("Displaying image for line")){
@@ -224,7 +230,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
             assemText[L] = ";"; L++;
             assemText[L] = "ISR0:   ORG 92"; L++;
             for (String s: ISR0){
-                String f = Format(s); // Format each line
+                String f = Parse(s); // Format each line
                 assemText[L] = f; // Add formatted line to master array
                 if (assemText[L].contains("Displaying image for line")){ // Support for display.show()
                     for (String t: displayImage){
@@ -238,7 +244,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
             assemText[L] = ";"; L++;
             assemText[L] = "ISR1:   ORG 104"; L++;
             for (String s: ISR1){
-                String f = Format(s); // FOrmat each line
+                String f = Parse(s); // FOrmat each line
                 assemText[L] = f; // Add formatted line to master array
                 if (assemText[L].contains("Displaying image for line")){ // Support for display.show()
                     for (String t: displayImage){ 
@@ -281,7 +287,7 @@ public class GUIPythonIn extends javax.swing.JFrame {
      * @param Python command
      * @return Assembly command
      */
-    private static String Format(String line) {
+    private static String Parse(String line) {
         
         String formatted = ""; // Assembly command to be returned
      

@@ -32,7 +32,7 @@ public final class LED {
     public LED(String in){
         this.inputLine = in;
         
-        if (inputLine.contains("set_pixel")||inputLine.contains("plot")){
+        if (inputLine.contains("set_pixel")||inputLine.contains("plot")||inputLine.contains("create")){
             outputLine = toggleLED(inputLine); // Toggle LED for JavaScript or Python commands
         }else if (inputLine.contains("clear")){
             clearPixels(inputLine); // Clear LEDs
@@ -131,7 +131,7 @@ public final class LED {
                     } break;
             } 
         // If intensity between 5 and 9, or JavaScript command plot(), turn LED on    
-        }else if ((line.contains(".plot")||((intensity>=5) && (intensity<10)))){
+        }else if ((line.contains("create"))||(line.contains(".plot")||((intensity>=5) && (intensity<10)))){
             switch (y){ // Switch block with case for each coordinate
                 case "0":
                     switch (x){
@@ -157,6 +157,7 @@ public final class LED {
                             command = "SETBR R0, 9 ; Turn on LED (2,1)";
                             break;
                         case "1":
+                            
                             command = "SETBR R0, 10 ; Turn on LED (1,1)";
                             break;
                         case "0":
